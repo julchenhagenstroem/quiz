@@ -2,6 +2,7 @@
 # It's used to aid autocompletion in code editors.
 
 import otree.api
+
 from .. import models
 
 

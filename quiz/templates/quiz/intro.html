@@ -1,0 +1,60 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Introduction (1/3)
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Thanks for participating in this study.
+    </p>
+
+    <p>
+        Please read the following instructions carefully. You will find a hard copy of these instructions on your desk.
+
+     </p>
+
+    <p>
+        The main part of this study is a geography quiz. Think of it as pub quiz.
+        We will split you up into 2 teams: Team A and Team B. Everybody on your team will
+        receive the same questions you receive. However, you will answer your questions individually. The other team
+        will receive different questions. Each question comes with 4 options, one of which is correct.
+    </p>
+    <p>
+        There will be {{ Constants.no_rounds }} rounds with {{ Constants.questions_per_round }} questions each.
+        You will answer one question at a time.
+        The quiz is timed: You will have {{ Constants.ret_task_timer }}
+        seconds to answer each question. You will see the timer as you answer the questions.
+        Please answer the question and validate your answer by clicking 'Next'
+        before the timer gets to zero. If you do not click 'Next' within those
+        {{ Constants.ret_task_timer }} seconds you will be automatically forwarded to the next page. In that case
+        your answer will not be recorded and you will not earn any money on that question.
+        After each of your own team's question you will see the other team's question.
+        (Obviously, we will not ask you to answer the other team's questions.)
+    </p>
+    <p>
+        The time you spend looking at the other team's question is not timed. You may use that as a short break
+        before you move on to your team's next question.
+        If you do not tick any of the 4 answer choices you within your 30 second time limit no answer will be
+        recorded and you will be forwarded to the next page.
+
+    </p>
+    <p>
+        After each round, that is, after {{ Constants.questions_per_round }} questions you will see the correct
+        answers to your own team's questions, the other team's questions, and the mean percentage of
+        correct answers within both teams.
+    </p>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

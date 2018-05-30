@@ -1,0 +1,41 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Expectations
+{% endblock %}
+
+{% block content %}
+
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Before we move on to the last question we are curious to know your expectations:
+        Do you expect both teams to have same chances of getting one of the easier questions
+        or do you expect one team to have a higher chance of getting one of the easier questions?
+    </p>
+
+    <p>
+        Please use to following scale from 0 to 100 to indicate if you think the odds are in favour of Team A (0),
+        the odds are the same for both Teams, or the odds are in favour of Team B (100).
+
+    </p>
+
+    <p>
+        0 = 'the odds are heavily in favour of Team A' (Team A will get an easier question than Team B). <br>
+        50 = 'the odds are about the same for both teams'  <br>
+        100 = 'the odds are heavily in favour of Team B' (Team B will get an easier question than Team A).  <br>
+    </p>
+
+    {% formfield player.expectationsLastQSlider %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

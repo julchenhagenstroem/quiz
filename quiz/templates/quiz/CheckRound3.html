@@ -1,0 +1,51 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Check Round 2
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+
+    <p>
+        Checking...
+
+        {{ n_team_a }} n_team_a <br>
+        {{ n_team_b }} n_team_b <br>
+
+        {{ n_team_a_consented }} n_team_a_consented <br>
+        {{ n_team_b_consented }} n_team_b_consented <br>
+
+        {{ team_a_is_correct_total }} team_a_is_correct_total <br>
+        {{ team_b_is_correct_total }} team_b_is_correct_total <br>
+
+        {{ team_a_earned_total }} team_a_earned_total <br>
+        {{ team_b_earned_total }} team_b_earned_total <br>
+
+        {{ team_a_avg_is_correct }} team_a_avg_is_correct <br>
+        {{ team_b_avg_is_correct }} team_b_avg_is_correct <br>
+
+        {{ team_a_add_on }} team_a_add_on <br>
+        {{ team_b_add_on }} team_b_add_on <br>
+
+    </p>
+
+
+
+</div>
+
+<p>
+
+</p>
+
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

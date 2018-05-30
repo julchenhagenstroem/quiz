@@ -1,0 +1,39 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Team {% if player.treatment == 'A' %} B {% else %} A {% endif %}: Correct answers
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        And here are the correct answers for Team {% if player.treatment == 'A' %} B {% else %} A {% endif %}.
+    </p>
+
+
+    <table class="table">
+        <tr>
+            <th>Other team's question:</th>
+            <th>Correct answer:</th>
+        </tr>
+        {% for p in player_in_last_4_qs %}
+            <tr>
+                <td>{{ p.other_question }}</td>
+                <td>{{ p.other_solution }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

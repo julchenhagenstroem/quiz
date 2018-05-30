@@ -1,0 +1,26 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Your Views on Feedback 1
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <body style="background-color:#e7f0f1;">
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

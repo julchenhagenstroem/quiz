@@ -1,0 +1,79 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Payoffs
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+
+    <p>
+        Payoffs are calculated as follows: Each team member keeps half of their earnings, and contributes the
+        other half of their earnings into a pot, which is evenly divided among all team members. Have a look
+        at this table to see how much you will get out of your team's pot.
+
+    </p>
+
+    <p>
+
+    <table class="table">
+    <tr>
+        <th>Team</th>
+        <th>Number of People on Team</th>
+        <th>Percent Correct Answers</th>
+        <th>Added onto own part of earnings</th>
+     </tr>
+
+    <tr>
+        <td>A</td>
+        <td>{{ n_team_a }}</td>
+        <td>{{ team_a_avg_is_correct }}</td>
+        <td>{{ team_a_add_on }}</td>
+    </tr>
+
+    <tr>
+        <td>B</td>
+        <td>{{ n_team_b }}</td>
+        <td>{{ team_b_avg_is_correct }}</td>
+        <td>{{ team_b_add_on }}</td>
+    </tr>
+    </table>
+
+    </p>
+
+    (Click 'next' to see a summary of your own payoffs.)
+
+</div>
+
+<p>
+
+    <strong>Checking... (Pre-testers: please ignore this)</strong><br>
+
+        {{ is_correct_total }} is_correct_total <br>
+        {{ earned_total }} earned_total <br>
+        {{ team_a_earned_total }} team_a_earned_total <br>
+        {{ team_b_earned_total }} team_b_earned_total <br>
+        {{ add_on }} add_on <br>
+        {{ n_team_a }} n_team_a <br>
+        {{ n_team_b }} n_team_b <br>
+        {{ team_a_is_correct_total }} team_a_total_is_correct <br>
+        {{ team_b_is_correct_total }} team_b_total_is_correct <br>
+        {{ team_a_add_on }} team_a_add_on <br>
+        {{ team_b_add_on }} team_b_add_on <br>
+        {{team_a_avg_is_correct}} team_a_avg_is_correct <br>
+        {{team_b_avg_is_correct}} team_b_avg_is_correct <br>
+        {{ payoff }} payoff <br>
+
+</p>
+
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

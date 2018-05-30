@@ -1,0 +1,29 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Correct Answers
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        In total, you answered {{ is_correct_total }} out of {{ Constants.num_rounds }}
+        questions correctly. Therefore, you have earned a total amount of {{ earned_total }}.
+        Half of this is yours; the other half will be put into your team's pot to be evenly
+        divided among all members of your team.
+
+    </p>
+
+</div>
+
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

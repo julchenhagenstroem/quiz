@@ -1,0 +1,41 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Feedback 1
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <div style="font-style: italic">
+    <body style="background-color:#faf0e6;">
+
+    <p>
+
+Checking...<br>
+
+treatment {{ player.treatment }} <br>
+falsefeedback {{ falsefeedback }} <br>
+
+
+    bullet_points_false_facts_fairplay.0 {{ bullet_points_false_facts_fairplay.0 }} <br>
+    bullet_points_false_facts_fairplay.1 {{ bullet_points_false_facts_fairplay.1 }} <br>
+    bullet_points_false_facts_fairplay.2 {{ bullet_points_false_facts_fairplay.2 }} <br>
+
+    bullet_points_true_facts.0 {{ bullet_points_true_facts.0 }} <br>
+    bullet_points_true_facts.1 {{ bullet_points_true_facts.1 }} <br>
+    bullet_points_true_facts.2 {{ bullet_points_true_facts.2 }} <br>
+
+    </p>
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

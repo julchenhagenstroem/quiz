@@ -1,0 +1,24 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Results Team A and B
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        In <strong>all rounds</strong>, on average, the members of Team A answered {{ team_a_avg_is_correct }}% of their questions correctly. <br>
+        In <strong>all rounds</strong>, on average, the members of Team B answered {{ team_b_avg_is_correct }}% of their questions correctly.
+    </p>
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

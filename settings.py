@@ -13,6 +13,12 @@ SESSION_CONFIG_DEFAULTS = {
 
 SESSION_CONFIGS = [
     {
+        'name': 'quiz',
+        'display_name': "Quiz",
+        'num_demo_participants': 3,
+        'app_sequence': ['quiz'],
+    },
+    {
         'name': 'my_simple_survey',
         'display_name': "My Simple Survey",
         'num_demo_participants': 3,
@@ -36,12 +42,7 @@ SESSION_CONFIGS = [
         'num_demo_participants': 1,
         'app_sequence': ['survey', 'payment_info'],
     },
-    {
-        'name': 'quiz',
-        'display_name': "Quiz",
-        'num_demo_participants': 1,
-        'app_sequence': ['quiz'],
-    },
+
 ]
 # see the end of this file for the inactive session configs
 
@@ -50,9 +51,9 @@ SESSION_CONFIGS = [
 # for example: de, fr, ja, ko, zh-hans
 LANGUAGE_CODE = 'en'
 
-# e.g. EUR, GBP, CNY, JPY
-REAL_WORLD_CURRENCY_CODE = 'USD'
-USE_POINTS = True
+# e.g. EUR, GBP, CNY, JPY, USD
+REAL_WORLD_CURRENCY_CODE = 'GBP'
+USE_POINTS = False # True
 
 ROOMS = [
     {

@@ -1,0 +1,53 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+Consent
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+    Before we start we would like to ask you to confirm that you agree to participate.
+    </p>
+    <p>
+    <strong>By hitting the Next button:</strong>
+    </p>
+
+<ol>
+    <li>You confirm that you understand that your participation is voluntary and that you are free to withdraw from this study at any time.</li>
+    <li>You understand that you may ask the experimenters any questions you may have before or during the experiment.</li>
+    <li>You understand that you may e-mail the researchers to ask any questions you may have about this study,
+        or to report any concerns you may have about this study or your data.</li>
+    <li>You understand that your personal details will not be revealed to anybody not directly involved in this research project.</li>
+    <li>You understand that the data collected in this project, including your words may be quoted in publications,
+        reports, web pages, and other research outputs.</li>
+    <li>You understand that the data we use for publication is completely anonymous and cannot be traced back
+        to any individual.</li>
+    <li>You agree that your (anonymized) data be shared with other researchers and be archived at the UK Data Archive.</li>
+    <li><strong>You agree to take part in the study.</strong></li>
+</ol>
+
+    <p>
+        If you do not agree with any of these points do not click the Next button.
+        If you have any questions or concerns please raise your hand now and an experimenter will be with you shortly.
+    </p>
+
+</div>
+
+
+FOR PRE-TESTING:
+
+Team {{ treatment }} player. <br>
+False facts in the {{ falsefeedback }} feedback. <br>
+Sees {{ firstfeedback }} feedback first. <br>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

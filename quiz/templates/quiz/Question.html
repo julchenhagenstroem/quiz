@@ -1,14 +1,15 @@
 {% extends "global/Page.html" %}
-{% load otree static %}
+{% load staticfiles otree %}
 
 {% block title %}
-    Question {{ player.round_number }} of {{ Constants.num_rounds }}
+    Question {{ player.round_number }} of {{ Constants.num_rounds }}:
+    Team {% if player.treatment == 'A' %} A {% else %} B {% endif %}
 {% endblock %}
 
 {% block content %}
 
-    {% formfield player.submitted_answer label=player.question %}
+    <strong>{% formfield player.submitted_answer label=player.question %}</strong>
 
-    {% next_button %}
+{% next_button %}
 
 {% endblock %}

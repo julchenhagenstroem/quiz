@@ -1,0 +1,28 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Pretest for Memory Baseline
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+
+    Thanks a lot for pre-testing this study. Here are a few questions that will help me improve this experiment.
+    First, I would like to know if you remember seeing any of the following questions in this quiz.
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Feedback
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        That is the end of the quiz.
+        In a short moment we will ask for your feedback about this study. In particular we will want your
+        feedback on the following points:
+
+    <ul>
+    <li>{{ Constants.wantFeedbackOn.0 }}</li>
+    <li>{{ Constants.wantFeedbackOn.1 }}</li>
+    <li>{{ Constants.wantFeedbackOn.2 }}</li>
+    </ul>
+
+    </p>
+
+    <p>
+        But before we ask for your own, personal feedback about the quiz we would like to know whether
+        you agree with the following two verdicts.
+    </p>
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+
+PRE-TESTERS: PLEASE IGNORE: <br>
+Checking... <br>
+{{ treatment }} treatment <br>
+{{ firstfeedback }} firstfeedback <br>
+{{ falsefeedback }} falsefeedback <br>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Introduction (2/3)
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+
+    <p>
+        How much you make on this quiz depends on your own performance, but also on your group’s performance.
+    </p>
+
+    <p>
+        Your payoffs from the quiz are calculated as follows:
+        Each correct answer is worth {{ Constants.stakes }}. Everybody on your team will keep half of what they earn
+        for themselves. The other half will be put into a pot and will be evenly divided between all
+        team members. In mathematical terms:
+    </p>
+    <p>
+        Your payoff = (0.5 * number of questions <strong>you</strong> answered correctly) +
+        (0.5 * total number of questions <strong> your team</strong> answered correctly / number of people on your team).
+    </p>
+
+    <p>
+        Note, though, that we have a {{ Constants.minimum_payoff }} minimum payment policy at ESSEXLab.
+        You will be paid {{ Constants.minimum_payoff }} even if your payoff as determined by this quiz is below
+        this minimum payment.
+
+    </p>
+
+    <p>
+        That means that you can make between {{ Constants.minimum_payoff }}
+        (if neither you nor anybody else on your team answers any questions correctly) and
+        {{ Constants.maximum_payoff }} (if everybody on your team answers all questions correctly).
+    </p>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

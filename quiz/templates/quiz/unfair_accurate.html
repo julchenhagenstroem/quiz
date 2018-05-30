@@ -1,0 +1,37 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Your Views on Feedback 2
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <body style="background-color:#e7f0f1;">
+
+<p>
+    Here is a scale from 0 (very low) to 100 (very high). Thinking again about the person who wrote this feedback:
+    How would you rate this person on the following:
+
+    <p>
+    <strong>0 = very low</strong> |
+    <strong>100 = very high</strong>
+    </p>
+
+</p>
+
+    {% formfield player.educationRating_p1 label=" <strong>Education</strong>: This person is well educated."%}
+    {% formfield player.accuracyRating_p1 label="<strong>Accuracy</strong>: The points this person makes are factually accurate."%}
+    {% formfield player.representationRating_p1 label="<strong>Representation</strong>: This person represents the interests of my team."%}
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

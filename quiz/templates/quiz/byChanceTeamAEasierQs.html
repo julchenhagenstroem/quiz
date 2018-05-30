@@ -1,0 +1,42 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Luck of the Draw
+{% endblock %}
+
+{% block content %}
+
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Now sometimes it happens in a pub quiz that one team has the luck of the draw.
+        Thinking about this quiz: How likely do you think it is that Team A had the luck of the draw?
+        Put differently, how likely do think it is that this game was unbalanced and Team A was favoured?
+    </p>
+    <p>
+        Please use the following scale from 0 ('Team A definitely had luck of the draw') to 100
+        ('Definitely unbalanced; no way this happened by chance') to indicate your answer.
+    </p>
+
+    <p>
+        0 = Definitely by chance: Team A had the luck of the draw. <br>
+        50 = Could have happened by chance, could have been favoured. <br>
+        100 = Definitely not by chance: Team A was favoured. <br>
+
+    </p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

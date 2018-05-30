@@ -1,0 +1,42 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Introduction (3/3)
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+
+    <p>
+        Please do not look up any answers online or on your phone. Doing so will disqualify you from continuing this
+        study and from receiving any payment.
+    </p>
+    <p>
+        Please do not open any tabs other than the one with this survey.
+        (Note that the lab assistants can see everybody’s screen on their computers. If we see any open tabs we will
+        come out to check.)
+    </p>
+    <p>
+        Please do not close this browser window during the experiment.
+    </p>
+    <p>
+        If you need help with anything or if there is anything you do not understand at any point during this
+        experiment please raise your hand (up high!). One of the lab assistants will come and help you.
+    </p>
+    <p>
+        Please click the “Next” button to find which team you are on.
+    </p>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+
+{% endblock %}

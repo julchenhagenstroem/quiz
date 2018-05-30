@@ -1,0 +1,38 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+The End
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        That's the end of this experiment.
+    </p>
+
+    <p>
+        Please raise your hand to signal to the experimenters that you are finished. Please remain seated until
+        they come to your desk. You will be handed a receipt form as well as your payment.
+        <strong>Please sign the receipt form before you leave.</strong>
+    </p>
+    <p>
+        It may take us a few minutes to get everybody’s payments ready – please bear with us as we are paying your
+        fellow participants. We will do our best to be with you as quickly as we can.
+    </p>
+    <p>
+        Thanks again for coming along. Your participation in experiments at ESSEXLab makes social science research
+        at our university possible!
+    </p>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

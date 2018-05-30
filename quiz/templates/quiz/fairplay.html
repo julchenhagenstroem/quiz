@@ -1,0 +1,58 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Feedback {% if firstfeedback == 'fairplay' %} 1 {% else %} 2 {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <div style="font-style: italic">
+    <body style="background-color:#faf0e6;">
+
+    <p>
+        Good game!
+    <p>
+        Some questions were easy, others were more challenging. Team A has had the luck of the draw.
+        But that is the spirit of a pub quiz and that's what makes them fun: You have to be ready for anything
+        because what you get is pure chance.
+    </p>
+    <p>
+        Team A has done exceptionally well -- Congratulations! You won fair and square.
+    </p>
+    <p>
+        As to the specific questions:
+    </p>
+    <p>
+
+        {% if falsefeedback == 'fairplay' %}
+
+        {{ bullet_points_false_facts_fairplay.0 }}
+        {{ bullet_points_false_facts_fairplay.1 }}
+        {{ bullet_points_false_facts_fairplay.2 }}
+
+        {% endif %}
+
+        {% if falsefeedback == 'unfair' %}
+
+        {{ bullet_points_true_facts.0 }}
+        {{ bullet_points_true_facts.1 }}
+        {{ bullet_points_true_facts.2 }}
+
+        {% endif %}
+
+    </p>
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+
+
+{% endblock %}

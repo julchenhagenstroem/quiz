@@ -1,0 +1,44 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Your Views on Feedback 2
+{% endblock %}
+
+{% block content %}
+
+<p>
+    Now we are interested in what you think about the last three points in this person's feedback.
+    How true or false do you think they are?
+</p>
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <body style="background-color:#faf0e6;">
+
+{% if falsefeedback == 'fairplay' %}
+
+    {% formfield player.false_fact_too_easy %}
+    {% formfield player.false_fact_too_hard %}
+    {% formfield player.false_fact_30sec_fairplay %}
+
+{% endif %}
+
+{% if falsefeedback == 'unfair' %}
+
+    {% formfield player.true_fact_too_easy %}
+    {% formfield player.true_fact_too_hard %}
+    {% formfield player.true_fact_30sec %}
+
+{% endif %}
+
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

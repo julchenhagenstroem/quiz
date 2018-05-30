@@ -1,0 +1,42 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Question {{ player.round_number }} of {{ Constants.num_rounds }}:
+    Team {% if player.treatment == 'A' %} B {% else %} A {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+<p>
+    And here is the other team's question. [This is just for your information -- not for you to answer!]
+
+</p>
+
+<p>
+
+    <strong>{{ player.other_question }}</strong>
+
+</p>
+
+    <ul>
+    <li>{{ choice1 }} </li>
+    <li>{{ choice2 }} </li>
+    <li>{{ choice3 }}</li>
+    <li>{{ choice4 }}</li>
+    </ul>
+
+<p>
+    Please click 'Next' to see your team's next question.
+
+</p>
+
+</div>
+
+{% next_button %}
+
+{% endblock %}

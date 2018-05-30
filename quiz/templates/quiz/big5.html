@@ -1,0 +1,31 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Personality
+{% endblock %}
+
+{% block content %}
+
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Here are a number of personality traits that may or may not apply to you. Please indicate the extent to
+        which you agree or disagree with that statement. You should rate the extent to which the pair of traits
+        applies to you, even if one characteristic applies more strongly than the other.
+    </p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

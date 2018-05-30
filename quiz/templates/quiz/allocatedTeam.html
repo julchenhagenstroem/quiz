@@ -1,0 +1,34 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Team
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+
+        You were randomly assigned to <strong>Team {{ player.treatment }}</strong>.
+    </p>
+    <p>
+
+        To help you get the hang of this experiment we will start with one practice question before we move on
+        to the actual (paid) quiz.
+    </p>
+    <p>
+        Please click ‘Next’ when you are ready to start.
+
+    </p>
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+
+{% endblock %}

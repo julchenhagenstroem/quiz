@@ -1,0 +1,50 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Correct Answers
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        In this round, you answered {{ is_correct_this_round }} out of 4 questions correctly.
+        Therefore, you have earned {{ earned_this_round }}.
+        Half of what you earn is yours; the other half will be put into your team's pot to be evenly
+        divided among all members of your team.
+    <p/>
+
+    <p>
+        Here are the correct answers for your team (Team {% if player.treatment == 'A' %} A {% else %} B {% endif %}).
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Question</th>
+            <th>Your answer</th>
+            <th>Correct answer</th>
+            <th>Answered correctly?</th>
+        </tr>
+        {% for p in player_in_last_4_qs %}
+            <tr>
+                <td>{{ p.question }}</td>
+                <td>{{ p.submitted_answer }}</td>
+                <td>{{ p.solution }}</td>
+                <td>{{ p.is_correct }}</td>
+            </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
+
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

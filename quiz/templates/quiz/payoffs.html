@@ -1,0 +1,75 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Payoffs
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Payoffs are calculated as follows: Each team member keeps half of their earnings, and contributes the
+        other half of their earnings into a pot, which is evenly divided among all team members.
+    </p>
+    <p>
+        Here is how both teams did:
+    </p>
+
+    <table class="table">
+    <tr>
+        <th>Team</th>
+        <th># Team Members</th>
+        <th>% Questions Correct</th>
+        <th>Team's pot / # members</th>
+        <th>Average Payoff</th>
+     </tr>
+
+    <tr>
+        <td>A</td>
+        <td>{{ n_team_a_consented }} team members</td>
+        <td>{{ team_a_avg_is_correct }}%</td>
+        <td>{{ team_a_add_on }}</td>
+        <td>{{ team_a_avg_payoff }}</td>
+    </tr>
+
+    <tr>
+        <td>B</td>
+        <td>{{ n_team_b_consented }} team members</td>
+        <td>{{ team_b_avg_is_correct }}%</td>
+        <td>{{ team_b_add_on }}</td>
+        <td>{{ team_b_avg_payoff }}</td>
+    </tr>
+    </table>
+
+    </p>
+
+
+    <p>
+        <strong>Your Payoff</strong>
+    </p>
+
+    <p>
+        You answered {{ is_correct_total }} out of {{ Constants.num_rounds }} questions correctly.
+        That means that you have earned {{ earned_total }}.
+        Half of these earnings (i.e. {{ half_own_earnings }}) are yours, the other half have been transferred
+        to your team's pot. As a member of Team {{ treatment }} you have received
+        {% if player.treatment == 'A' %} {{ team_a_add_on }} {% else %} {{ team_b_add_on }} {% endif %}
+        out of this pot. Therefore, your total payoff for this game is <strong> {{ payoff }}.</strong>
+    </p>
+
+    <p>
+        (Note that if your payoff is less than the {{ Constants.minimum_payoff }} minimum payoff you will
+        be paid {{ Constants.minimum_payoff }}).
+    </p>
+
+</div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

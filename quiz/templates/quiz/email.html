@@ -1,0 +1,45 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Thanks
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+<p>
+    Thanks for participating in this experiment.
+</p>
+
+<p>
+
+    One last thing: Some of our lab participants are interested in knowing the results of the studies they
+    participate in.
+
+    If you are interested in this study's findings please write in your e-mail address here.
+
+    (We will keep your e-mail address separately from your data, and we will only use it
+    to e-mail you the results of this study. Note though that it may take a while:
+    We will send out the results at the very end of this study so it may well take 6 months or longer.)
+
+    If you are not interested in this study's findings please do not write anything; just click 'Next'.
+
+</p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+
+ </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+
+{% endblock %}
