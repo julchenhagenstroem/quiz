@@ -1,1 +1,31 @@
-id,question,choice1,choice2,choice3,choice4,solution1,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam2,What is the capital city of the Czech Republic?,Bucharest,Budapest,Warsaw,Prague,Prague3,What is the capital city of Germany?,Frankfurt/Main,Berlin,Munich,Bonn,Berlin4,What is the capital city of Belgium?,Bruges,Antwerp,Brussels,Ghent,Brussels5,What is the capital city of Spain?,Seville,Valencia,Barcelona,Madrid,Madrid6,What is the capital city of Wales?,Belfast,Cardiff,London,Edinburgh,Cardiff7,What is the capital city of Northern Ireland?,London,Belfast,Edinburgh,Cardiff,Belfast8,What is the capital city of Ireland?,Waterford,Dublin,Cork,Limerick,Dublin9,What is the capital city of Scotland?,London,Belfast,Cardiff,Edinburgh,Edinburgh10,What is the capital city of Poland?,Warsaw,Tallinn,Brno,Prague,Warsaw11,What is the capital city of China?,Beijing,Tokyo,Washington D.C.,Ulaanbaatar,Beijing12,What is the capital city of North Korea?,Beijing,Seoul,Pyongyang,Moscow,Pyongyang13,What is the capital city of Japan?,Osaka,Fukushima,Kyoto,Tokyo,Tokyo14,Vienna is the capital city of: ,Austria,Switzerland,Poland,Germany,Austria15,Lisbon is the capital city of: ,Spain,Portugal,Italy,France,Portugal16,Stockholm is the capital city of: ,Finland,Norway,Sweden,Denmark,Sweden17,Ottawa is the capital city of: ,USA,Australia,England,Canada,Canada18,"Washington, D.C. is the capital city of: ",Australia,USA,England,Canada,USA19,Canberra is the capital city of:,England,USA,Australia,Canada,Australia20,Tokyo  is the capital city of: ,Japan,North Korea,China,South Korea,Japan21,Moscow  is the capital city of:,Moldova,Russia,Belarus,Ukraine,Russia22,Brasilia is the capital city of: ,Argentina,Brazil,Chile,Columbia,Brazil23,Athens is the capital city of:,Algeria,Armenia,Greece,Azerbaijan,Greece24,To get from London to Cardiff you would travel:,North,East,South,West,West25,To get from London to Brighton you would travel:,North,East,South,West,South26,To get from London to Edinburgh you would travel:,North,East,South,West,North27,To get from Dublin to Belfast you would travel:,North,East,South,West,North28,To get from Glasgow to Edinburgh you would travel:,North,East,South,West,East29,To get from San Francisco to Washington D.C. you would travel:,North,East,South,West,East30,To get from Miami to New York City you would travel:,North,East,South,West,North
+id,question,choice1,choice2,choice3,choice4,solution
+1,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+2,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+3,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+4,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+5,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+6,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+7,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+8,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+9,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+10,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+11,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+12,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+13,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+14,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+15,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+16,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+17,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+18,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+19,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+20,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+21,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+22,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+23,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+24,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+25,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+26,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+27,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+28,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+29,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
+30,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam
