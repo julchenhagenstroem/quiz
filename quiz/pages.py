@@ -1040,26 +1040,26 @@ class intro_dv_feedback1_copy(Page):
 
 class fairplay_gen_agree(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_p0']
+    form_fields = ['agreeFeedback_fairplay']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class fairplay_gen_agree_copy(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_p0']
+    form_fields = ['agreeFeedback_fairplay']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
 
 class fairplay_accurate(Page):
     form_model = 'player'
-    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
+    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class fairplay_accurate_copy(Page):
     form_model = 'player'
-    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
+    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
@@ -1111,26 +1111,26 @@ class intro_dv_feedback2_copy(Page):
 
 class unfair_gen_agree(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_p1']
+    form_fields = ['agreeFeedback_unfair']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class unfair_gen_agree_copy(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_p1']
+    form_fields = ['agreeFeedback_unfair']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
 
 class unfair_accurate(Page):
     form_model = 'player'
-    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
+    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class unfair_accurate_copy(Page):
     form_model = 'player'
-    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
+    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
