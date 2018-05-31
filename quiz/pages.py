@@ -218,10 +218,9 @@ class WaitAfterEachRound(WaitPage): # Not waiting for all!!
 
     body_text = "Waiting for your team mates to finish."
 
-
     # def after_all_players_arrive(self):
     #
-    #     self.player.set_own_correct_answers_this_round() # NOOOOO WORK -- Doesnt work here or on the page below (DOMINIK?)
+    #     self.player.set_own_correct_answers_this_round() # NOOOOO WORK (DOMINIK?)
     #     self.group.set_teams_correct_answers_this_round() # Needs is_correct_this_round
     #     self.group.set_teams_avg_correct_this_round() # Needs is_correct_this_round
 
@@ -281,7 +280,7 @@ class WaitAfterEachRound(WaitPage): # Not waiting for all!!
 # same participant in previous rounds of the same app. The difference is that in_all_rounds() includes the current
 # round's player. (RTD -- Apps & Rounds)
 
-class ownResultsThisRound(Page):
+class ownResultsThisRound(Page): # HIER WEITER
 
     def is_displayed(self):
         return self.round_number % 4 == 0  # % = modulo, e.g. 3 Runden mit 4 Fragen: 4, 8, 12 ist teilbar durch 3 (Rest == 0)
@@ -306,17 +305,22 @@ class ownResultsThisRound(Page):
         }
 
     def before_next_page(self):
-        self.group.set_teams_correct_answers_this_round()
+        self.group.set_teams_correct_answers_this_round() # THIS WORKS (PUSHED UP)
         self.group.set_teams_avg_correct_this_round()
 
 
-#     def before_next_page(self): # -- NOPE
+# Just trying it this would work here (didn't work in WaitPage) -- NOPE
+#     def before_next_page(self): # THIS SHOULD WORK FOR NORMAL PAGES -- SEE IF IT WORKS FOR WAITPAGES, AS WELL? -- NOPE
 #             self.player.set_own_correct_answers_this_round()
+#
+# AttributeError -- 'Player' object has no attribute 'player'
 
-#  This works neither under player nor under groups: AttributeError: 'Player' object has no attribute 'player'
-#  Ideally, I would calculate set_own_correct_answers_this_round on the waitpage above
+# CALCULATE OTHER TEAM'S RESULTS HERE?
 
-
+# Just trying if this would work here (didn't work in WaitPage) -- NOPE
+#     def before_next_page(self):
+#         self.player.set_teams_correct_answers_this_round()
+#  works neither under player nor under groups: AttributeError: 'Player' object has no attribute 'player'
 
 
 
@@ -365,10 +369,10 @@ class CheckRound1(Page):
             'falsefeedback': self.participant.vars['falsefeedback'],
             'firstfeedback': self.participant.vars['firstfeedback'],
 
-            'n_team_a': self.session.vars['n_team_a'],
+            'n_team_a': self.session.vars['n_team_a'], # THIS WORKS
             'n_team_b': self.session.vars['n_team_b'],
 
-            'n_team_a_consented': self.session.vars['n_team_a_consented'],
+            'n_team_a_consented': self.session.vars['n_team_a_consented'], # THIS WORKS
             'n_team_b_consented': self.session.vars['n_team_b_consented'],
 
             'is_correct_this_round': self.participant.vars['is_correct_this_round'],
@@ -402,10 +406,10 @@ class CheckRound2(Page):
             'falsefeedback': self.participant.vars['falsefeedback'],
             'firstfeedback': self.participant.vars['firstfeedback'],
 
-            'n_team_a': self.session.vars['n_team_a'],
+            'n_team_a': self.session.vars['n_team_a'],  # THIS WORKS
             'n_team_b': self.session.vars['n_team_b'],
 
-            'n_team_a_consented': self.session.vars['n_team_a_consented'],
+            'n_team_a_consented': self.session.vars['n_team_a_consented'],  # THIS WORKS
             'n_team_b_consented': self.session.vars['n_team_b_consented'],
 
             'is_correct_this_round': self.participant.vars['is_correct_this_round'],
@@ -424,7 +428,7 @@ class CheckRound2(Page):
 
 
 
-##### OTHER TEAM'S ANSWERS THIS ROUND #######################################
+##### OTHER TEAM'S ANSWERS THIS ROUND ####################################### THIS WORKS
 
 class otherTeamsQsThisRound(Page):
 
@@ -437,7 +441,7 @@ class otherTeamsQsThisRound(Page):
 
         player_in_last_4_qs = self.player.in_all_rounds()[-4: ]
 
-        # THIS GIVES WRONG ANSWERS!!
+        # THIS GIVES WRONG ANSWERS!!!
         # team_a_is_correct_this_round = sum([p.is_correct for p in self.player.in_all_rounds()[-4:] if p.treatment == 'A']) # WORKS BUT POSSIBLY WRONG NUMBERS
         # team_b_is_correct_this_round = sum([p.is_correct for p in self.player.in_all_rounds()[-4:] if p.treatment == 'B'])
         #
@@ -464,7 +468,7 @@ class otherTeamsQsThisRound(Page):
 
 
 
-##### OTHER TEAM'S RESULTS THIS ROUND #######################################
+##### OTHER TEAM'S RESULTS THIS ROUND ####################################### THIS WORKS HIER WEITER
 
 class teamsResultsThisRound(Page):
 
@@ -501,7 +505,7 @@ class endQuiz(Page):
             p.is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds()]) # THIS WORKS
             p.participant.vars['is_correct_total'] = p.is_correct_total
 
-        # THIS GIVES WRONG ANSWERS!!
+        # THIS GIVES WRONG ANSWERS!!!
         # # team_a_is_correct_total = sum([p.is_correct_total for p in self.subsession.get_players() if p.treatment == 'A']) #TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
         # # team_b_is_correct_total = sum([p.is_correct_total for p in self.subsession.get_players() if p.treatment == 'B'])
         #
@@ -518,7 +522,7 @@ class endQuiz(Page):
         # self.participant.vars['team_a_earned_total'] = team_a_earned_total
         # self.participant.vars['team_b_earned_total'] = team_b_earned_total
 
-        return {
+        return { # JUST TO CHECK...
             'is_correct_total': self.participant.vars['is_correct_total'],
         }
 
@@ -708,6 +712,9 @@ class payoffs(Page):
             'team_a_avg_is_correct': self.session.vars['team_a_avg_is_correct'],
             'team_b_avg_is_correct': self.session.vars['team_b_avg_is_correct'],
 
+            # 'team_a_avg_is_correct': team_a_avg_is_correct,  # self.session.vars['team_a_avg_is_correct'], HIER WEITER
+            # 'team_b_avg_is_correct': team_b_avg_is_correct,  # self.session.vars['team_b_avg_is_correct'],
+
             'team_a_avg_payoff': self.session.vars['team_a_avg_payoff'],
             'team_b_avg_payoff': self.session.vars['team_b_avg_payoff'],
 
@@ -720,7 +727,7 @@ class payoffs(Page):
             'team_a_pot': (self.session.vars['team_a_earned_total'] / 2),
             'team_b_pot': (self.session.vars['team_b_earned_total'] / 2),
 
-            'team_a_add_on': self.session.vars['team_a_add_on'],
+            'team_a_add_on': self.session.vars['team_a_add_on'], # THIS SHOULD BE THE ONLY NEW THING!!!
             'team_b_add_on': self.session.vars['team_b_add_on'],
 
             'treatment': self.participant.vars['treatment'],
@@ -977,6 +984,23 @@ class CheckBulletPoints(Page):
         }
 
 
+# SHUFFLE BULLET POINTS?
+
+#####################################################################################
+
+#  Shuffling bullet points in models.py to keep the order of qs for subsequent ratings
+
+# class bulletPoints(Page):
+#     form_model = 'player'
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds
+#
+#     def vars_for_template(self): # NEW
+#         return {
+#             'shuffled_bullet_points' : self.participant.vars['shuffled_bullet_points'],
+#         }
+
     #####################################################################################
     #
     # NB PYTHON ERRORS
@@ -1040,26 +1064,26 @@ class intro_dv_feedback1_copy(Page):
 
 class fairplay_gen_agree(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_fairplay']
+    form_fields = ['agreeFeedback_p0']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class fairplay_gen_agree_copy(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_fairplay']
+    form_fields = ['agreeFeedback_p0']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
 
 class fairplay_accurate(Page):
     form_model = 'player'
-    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
+    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class fairplay_accurate_copy(Page):
     form_model = 'player'
-    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
+    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
@@ -1111,26 +1135,26 @@ class intro_dv_feedback2_copy(Page):
 
 class unfair_gen_agree(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_unfair']
+    form_fields = ['agreeFeedback_p1']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class unfair_gen_agree_copy(Page):
     form_model = 'player'
-    form_fields = ['agreeFeedback_unfair']
+    form_fields = ['agreeFeedback_p1']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
 
 class unfair_accurate(Page):
     form_model = 'player'
-    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
+    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
 class unfair_accurate_copy(Page):
     form_model = 'player'
-    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
+    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
@@ -1168,6 +1192,39 @@ class unfair_falsefacts_copy(Page):
         return {
             'falsefeedback': self.participant.vars['falsefeedback'],
         }
+
+
+##### CONTROL GROUP GAMES ###################################################################
+
+# class control_p0(Page):
+#     form_model = 'player'
+#     form_fields = ['fair_point_p0',
+#                    'off_the_scale_p0',
+#                    'gross_exaggeration_fairplay_person'
+#                    ]
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds
+#
+#     def vars_for_template(self):
+#         return {
+#             'shuffled_fair_points': self.participant.vars['shuffled_fair_points'],
+#             'shuffled_off_the_scale': self.participant.vars['shuffled_off_the_scale'],
+#         }
+#
+# class control_p1(Page):
+#     form_model = 'player'
+#     form_fields = ['fair_point_p1',
+#                    'off_the_scale_p1',
+#                    'gross_exaggeration_unfair_person'
+#                    ]
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds
+#
+#     def vars_for_template(self):
+#         return {
+#             'shuffled_fair_points': self.participant.vars['shuffled_fair_points'],
+#             'shuffled_off_the_scale': self.participant.vars['shuffled_off_the_scale'],
+#         }
 
 
 ##### OWN FEEDBACK ##################################################################
@@ -1224,6 +1281,7 @@ class byChanceTeamAEasierQs(Page):
 
 
 
+
 ##### STABILITY OF STATUS DIFFERENCES ###############################################
 
 class feedbackMakesDifference(Page):
@@ -1232,6 +1290,8 @@ class feedbackMakesDifference(Page):
 
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
+
+
 
 
 

@@ -925,13 +925,13 @@ class Player(BasePlayer):
 
     #### GENERALLY AGREE ###############################################
 
-    agreeFeedback_fairplay = models.StringField(
+    agreeFeedback_p0 = models.StringField(
         choices=['Strongly agree', 'Agree', 'Slightly agree',
                  'Slightly disagree', 'Disagree', 'Strongly disagree'],
         label='Generally speaking, do you agree with the author of this feedback?',
         widget=widgets.RadioSelect)
 
-    agreeFeedback_unfair = models.StringField(
+    agreeFeedback_p1 = models.StringField(
         choices=['Strongly agree', 'Agree', 'Slightly agree',
                  'Slightly disagree', 'Disagree', 'Strongly disagree'],
         label='Generally speaking, do you agree with the author of this feedback?',
@@ -942,24 +942,24 @@ class Player(BasePlayer):
 
     # PERSON 1
 
-    educationRating_fairplay = models.IntegerField(
+    educationRating_p0 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    accuracyRating_fairplay = models.IntegerField(
+    accuracyRating_p0 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    representationRating_fairplay = models.IntegerField(
+    representationRating_p0 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
     # PERSON 2
 
-    educationRating_unfair = models.IntegerField(
+    educationRating_p1 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    accuracyRating_unfair = models.IntegerField(
+    accuracyRating_p1 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    representationRating_unfair = models.IntegerField(
+    representationRating_p1 = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
 # To specify the step size, do: Slider(attrs={'step': '0.01'})

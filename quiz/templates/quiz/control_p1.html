@@ -1,0 +1,31 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Feedback Person 2
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <div style="font-style: italic">
+    <body style="background-color:#e7f0f1;">
+
+        <ul>
+    <p>
+        <li>{{ shuffled_fair_points.1 }}</li>
+        <li>{{ shuffled_off_the_scale.1 }}</li>
+        <li>{{ Constants.gross_exaggerations.1 }}</li>
+    </p>
+       </ul>
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}
