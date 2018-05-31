@@ -12,12 +12,12 @@ SESSION_CONFIG_DEFAULTS = {
 }
 
 SESSION_CONFIGS = [
-    # {
-    #     'name': 'quiz',
-    #     'display_name': "Quiz",
-    #     'num_demo_participants': 3,
-    #     'app_sequence': ['quiz'],
-    # },
+    {
+        'name': 'quiz',
+        'display_name': "Quiz",
+        'num_demo_participants': 3,
+        'app_sequence': ['quiz'],
+    },
     # {
     #     'name': 'my_simple_survey',
     #     'display_name': "My Simple Survey",
