@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-
+    Higher Payoffs: Team A
 {% endblock %}
 
 {% block content %}
@@ -11,14 +11,11 @@
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
 
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
 
-<p>
-
-    That is the end of the practice round. Please click 'Next' to start the first round of the paid quiz.
-
-</p>
-
-</div>
+    </div>
 
 <span align="right">
 {% next_button %}

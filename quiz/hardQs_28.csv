@@ -1,0 +1,29 @@
+id,question,choice1,choice2,choice3,choice4,solution,difficulty
+1,What is the capital city of Liechtenstein?,Vaduz,Davos,Chur,Lech,Vaduz,hard
+2,What is the capital city of Venezuela?,Caracas,Sucre,Quito,Bogota,Caracas,hard
+3,What is the capital city of Yemen?,Abu Dhabi,Riyadh,Dubai,Sanaa,Sanaa,hard
+4,What is the capital city of Laos?,Hanoi,Phnom Penh,Vientiane,Naypyidaw,Vientiane,hard
+5,What is the capital city of Papua New Guinea?,Port Moresby,Noumea,Palikir,Nukualofa,Port Moresby,hard
+6,What is the capital city of Vanuatu?,Mata Utu ,Port Vila,Honiara,Avarua,Port Vila,hard
+7,What is the capital city of Suriname?,Caracas,Georgetown,Paramaribo,Cayenne,Paramaribo,hard
+8,What is the capital city of Belize?,Belmopan,Tegucigalpa,Managua,San Salvador,Belmopan,hard
+9,What is the capital city of Costa Rica?,San Manuel,San Jose,San Pedro,San Juan,San Jose,hard
+10,What is the capital city of Andorra?,Andorra la Vella,San Sebastian,La Massana,Carcassonne,Andorra la Vella,hard
+11,Jefferson City is the capital of which U.S. state?,Missouri,Mississippi,Arkansas,Tennessee,Missouri,hard
+12,Frankfort is the capital of which U.S. state?,Ohio,South Carolina,Kentucky,Indiana,Kentucky,hard
+13,Regina is the capital of which Canadian province or territories?,Saskatchewan,Alberta,Manitoba,British Columbia,Saskatchewan,hard
+14,Yellowknife is the capital of which Canadian province or territories?,Nunavut,The Northwest Territories,Yukon,Newfoundland and Labrador,The Northwest Territories,hard
+15,Whitehorse is the capital of which Canadian province or territories?,Newfoundland and Labrador,Yukon,Nunavut,Northwest Territories,Yukon,hard
+16,Porto Alegre is the capital of which Brazilian state?,Rio Grande do Sul,Mato Grosso do Sul,Parana,Sao Paolo,Rio Grande do Sul,hard
+17,Cuiaba is the capital of which Brazilian state?,Tocantins,Rondonia,Mato Grosso do Sul,Goias,Mato Grosso do Sul,hard
+18,Hermosillo is the capital of which Mexican state?,Coahuila,Sonora,Sinaloa,Chihuahua,Sonora,hard
+19,Villahermosa is the capital of which Mexican state?,Tabasco,Oaxaca,Veracruz,Chiapas,Tabasco,hard
+20,"In Scotland, to get from Glencoe to Fort William you would travel:",North,East,South,West,North,hard
+21,"In Russia, to get from Novosibirsk to Omsk, you would travel:",North,East,South,West,West,hard
+22,"In Ukraine, to get from Kiev to Kharkiv, you would travel:",North,East,South,West,East,hard
+23,"In Iran, to get from Isfahan to Tehran you would travel:",North,East,South,West,North,hard
+24,"In Chile, to get from Valparaiso to Santiago you would travel:",North,East,South,West,East,hard
+25,"In the Carribean, to get from Haiti to Puerto Rico, you would travel:",North,East,South,West,East,hard
+26,"In Pakistan, to get from Lahore  to Islamabad you would travel:",North,East,South,West,North,hard
+27,"In Iraq, to get from  Baghdad to  Mosul you would travel:",North,East,South,West,North,hard
+28,To get from Buenos Aires (Argentina) to Montevideo (Uruguay) you would travel:,North,East,South,West,East,hard

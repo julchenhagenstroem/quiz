@@ -1,0 +1,29 @@
+id,question,choice1,choice2,choice3,choice4,solution,difficulty
+1,What is the capital city of the Netherlands?,Amsterdam,Rotterdam,The Hague,Brussels,Amsterdam,easy
+2,What is the capital city of the Czech Republic?,Bucharest,Budapest,Warsaw,Prague,Prague,easy
+3,What is the capital city of Belgium?,Bruges,Antwerp,Brussels,Ghent,Brussels,easy
+4,What is the capital city of Wales?,Belfast,Cardiff,London,Edinburgh,Cardiff,easy
+5,What is the capital city of Northern Ireland?,London,Belfast,Edinburgh,Cardiff,Belfast,easy
+6,What is the capital city of Ireland?,Waterford,Dublin,Cork,Limerick,Dublin,easy
+7,What is the capital city of Scotland?,London,Belfast,Cardiff,Edinburgh,Edinburgh,easy
+8,What is the capital city of Poland?,Warsaw,Tallinn,Brno,Prague,Warsaw,easy
+9,What is the capital city of Turkey?,Ankara,Istanbul,Bucharest,Budapest,Ankara,easy
+10,What is the capital city of North Korea?,Nanjing,Seoul,Pyongyang,Shanghai,Pyongyang,easy
+11,What is the capital city of Japan?,Osaka,Fukushima,Kyoto,Tokyo,Tokyo,easy
+12,Vienna is the capital city of: ,Austria,Switzerland,Poland,Germany,Austria,easy
+13,Lisbon is the capital city of: ,Spain,Portugal,Italy,France,Portugal,easy
+14,Stockholm is the capital city of: ,Finland,Norway,Sweden,Denmark,Sweden,easy
+15,Ottawa is the capital city of: ,USA,Australia,England,Canada,Canada,easy
+16,New Delhi is the capital city of: ,India,Bangladesh,China,Thailand,India,easy
+17,Canberra is the capital city of:,England,USA,Australia,Canada,Australia,easy
+18,Tokyo  is the capital city of: ,Japan,North Korea,China,South Korea,Japan,easy
+19,Kiev  is the capital city of:,Moldova,Bulgaria,Belarus,Ukraine,Ukraine,easy
+20,Buenos Aires is the capital city of: ,Argentina,Brazil,Chile,Columbia,Argentina,easy
+21,Athens is the capital city of:,Algeria,Armenia,Greece,Azerbaijan,Greece,easy
+22,To get from London to Cardiff you would travel:,North,East,South,West,West,easy
+23,To get from London to Brighton you would travel:,North,East,South,West,South,easy
+24,To get from London to Edinburgh you would travel:,North,East,South,West,North,easy
+25,To get from Dublin to Belfast you would travel:,North,East,South,West,North,easy
+26,To get from Glasgow to Edinburgh you would travel:,North,East,South,West,East,easy
+27,To get from San Francisco to Washington D.C. you would travel:,North,East,South,West,East,easy
+28,To get from Miami to New York City you would travel:,North,East,South,West,North,easy

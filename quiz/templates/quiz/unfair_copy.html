@@ -14,44 +14,40 @@
     <body style="background-color:#e7f0f1;">
 
     <p>
-        This game was unfair. The questions Team A got were far easier than the questions Team B got.
-        Team B had no chance of getting anywhere near Team A's payoffs, let alone the maximum payoffs.
+        <p style="font-size:22px;"><strong><u>This game was unfair.</u></strong></p>
     </p>
     <p>
-        The time limit probably didn't hurt Team A all that much; their questions were easy enough to be
-        answered in no time. But for Team B it was an additional nuisance.
-    </p>
-    <p>
+        <strong>The questions Team A got were far easier than the questions Team B got.</strong>
+        Team B had no chance of getting anywhere near Team A's payoffs, let alone the maximum payoff.
         Considering the difficulty of the questions Team B got anything more than zero correct answers is impressive.
-        Anyone can see from the payments that Team B has done extraordinarily well.
     </p>
     <p>
-        So my main feedback is this: You should top up the payoffs for Team B.
-        An additional flat payment of GBP 5.00 on top of each team member's payoff is the least you can do.
+        <strong> Anyone can see from the payments that Team B has done extraordinarily well.
+        Team B should have their payments topped up.</strong> The least you can do is give each member of Team B an additional flat
+        payment of GBP 5.00 on top of their payoffs.
     </p>
     <p>
         To answer the points you wanted feedback on:
     </p>
-    <p>
 
         {% if falsefeedback == 'unfair' %}
-
-        {{ bullet_points_false_facts_unfair.0 }}
-        {{ bullet_points_false_facts_unfair.1 }}
-        {{ bullet_points_false_facts_unfair.2 }}
-
+    <ul>
+        <li>{{ Constants.bullet_points_false_facts_unfair.0 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_unfair.1 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_unfair.2 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_unfair.3 }}</li>
+    </ul>
         {% endif %}
 
         {% if falsefeedback == 'fairplay' %}
-
-        {{ bullet_points_true_facts.0 }}
-        {{ bullet_points_true_facts.1 }}
-        {{ bullet_points_true_facts.2 }}
-
-
+    <ul>
+        <li>{{ Constants.bullet_points_true_facts.0 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.1 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.2 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.3 }}</li>
+    </ul>
         {% endif %}
 
-    </p>
 
 </div>
 </body>
@@ -59,6 +55,5 @@
 <span align="right">
 {% next_button %}
 </span>
-
 
 {% endblock %}

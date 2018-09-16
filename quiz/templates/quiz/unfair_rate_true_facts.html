@@ -17,21 +17,10 @@
     <link rel="stylesheet" type="text/css"/>
     <body style="background-color:#e7f0f1;">
 
-        {% if falsefeedback == 'unfair' %}
-
-            {% formfield player.false_fact_too_easy %}
-            {% formfield player.false_fact_too_hard %}
-            {% formfield player.false_fact_too_hard2 %}
-            {% formfield player.false_fact_30sec_unfair %}
-
-        {% else %}
-
             {% formfield player.true_fact_too_easy %}
             {% formfield player.true_fact_too_hard %}
             {% formfield player.true_fact_too_hard2 %}
             {% formfield player.true_fact_30sec %}
-
-        {% endif %}
 
 </div>
 </body>

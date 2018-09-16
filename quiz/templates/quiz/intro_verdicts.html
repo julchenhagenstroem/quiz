@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-    Feedback Person 2
+    Other People's Feedback
 {% endblock %}
 
 {% block content %}
@@ -10,19 +10,15 @@
 <div class="instructions well well-lg">
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
-    <div style="font-style: italic">
-    <body style="background-color:#e7f0f1;">
 
-        <ul>
     <p>
-        <li>{{ shuffled_fair_points.1 }}</li>
-        <li>{{ shuffled_off_the_scale.1 }}</li>
-        <li>{{ Constants.gross_exaggerations.1 }}</li>
+        Thanks for your feedback.
     </p>
-       </ul>
-
+    <p>
+        <strong>Next, we will show you two other verdicts about the same game you just played.</strong> We would like to know whether you
+        agree with them.
+    </p>
 </div>
-</body>
 
 <span align="right">
 {% next_button %}

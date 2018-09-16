@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-    Feedback
+    Does Feedback Make a Difference?
 {% endblock %}
 
 {% block content %}
@@ -11,6 +11,19 @@
 <div class="instructions well well-lg">
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        At university (and elsewhere!) you are often asked for feedback.
+        For instance, restaurants ask for feedback on their menu, and professors ask for feedback on their classes.
+        We asked you for feedback about a geography quiz.
+    </p>
+    <p>
+        <strong> Thinking in particular about the person who thought this quiz was unfair:
+            How likely do think it is that this person's voice is heard?</strong>
+    </p>
+    <p>
+        Put differently: How likely do you think it is this quiz will be changed according to this person's suggestions?
+    </p>
 
     {% for field in form %}
         {% formfield field %}

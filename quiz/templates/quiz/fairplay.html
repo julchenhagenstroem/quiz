@@ -14,36 +14,36 @@
     <body style="background-color:#faf0e6;">
 
     <p>
-        Good game!
+        <p style="font-size:22px;"><strong><u>Good game!</u></strong></p>
+    </p>
     <p>
-        Some questions were easy, others were more challenging. Team A has had the luck of the draw.
+        <strong>Team A has had the luck of the draw.</strong>
         But that is the spirit of a pub quiz and that's what makes them fun: You have to be ready for anything
         because what you get is pure chance.
     </p>
     <p>
-        Team A has done exceptionally well -- Congratulations! You won fair and square.
-    </p>
-    <p>
+        <strong>Team A has done exceptionally well. You won fair and square.</strong>
+
         As to the specific questions:
     </p>
     <p>
-
         {% if falsefeedback == 'fairplay' %}
-
-        {{ bullet_points_false_facts_fairplay.0 }}
-        {{ bullet_points_false_facts_fairplay.1 }}
-        {{ bullet_points_false_facts_fairplay.2 }}
-
+    <ul>
+        <li>{{ Constants.bullet_points_false_facts_fairplay.0 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_fairplay.1 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_fairplay.2 }}</li>
+        <li>{{ Constants.bullet_points_false_facts_fairplay.3 }}</li>
+    </ul>
         {% endif %}
 
         {% if falsefeedback == 'unfair' %}
-
-        {{ bullet_points_true_facts.0 }}
-        {{ bullet_points_true_facts.1 }}
-        {{ bullet_points_true_facts.2 }}
-
+    <ul>
+        <li>{{ Constants.bullet_points_true_facts.0 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.1 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.2 }}</li>
+        <li>{{ Constants.bullet_points_true_facts.3 }}</li>
+    </ul>
         {% endif %}
-
     </p>
 
 </div>
@@ -52,7 +52,5 @@
 <span align="right">
 {% next_button %}
 </span>
-
-
 
 {% endblock %}

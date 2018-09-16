@@ -12,60 +12,36 @@ from random import shuffle
 author = 'Christine Stedtnitz'
 
 doc = """
-A quiz app that reads its questions from a spreadsheet
-(see quiz.csv in this directory).
-There is 1 question per page; the number of pages in the game
-is determined by the number of questions in the CSV.
-See the comment below about how to randomize the order of pages.
+Pub Quiz Experiment / ESSEXLab, June 2018
 """
 
-
 #####################################################################
-# OTREE QUESTIONS
-
-# PRETTIFY CODE
+# HEROKU / OTREE QUESTIONS
+#
+# TO DO
+# -- CHECK Payoffs !!
+# -- Bullet Points
+# -- Check whole dataset
+#
+# -- ASK DOMINIK:
 # -- Can't seem to use any methods defined under player that use self.player.in_all_rounds()
 # -- (e.g. def set_teams_correct_answers_this_round def set_own_correct_answers_this_round(self). So I am defining those in pages.
 # -- (Works but would be prettier in here.)
-
-# -- Randomizing page sequences so they see either the unfair or the fairplay person first:
-# -- I copied all the pages and used the display logic.
-# --(Works here aber gibt wahrscheinlich elegantere Methoden. This explodes the number of templates I have.)
-
-# -- Templates: Any way to def vars_for_template in bulk? (I am always using the same variables and listing them
-# in vars_for_template all the time
-
-# PRETESTING
-# -- How do I program this so that 1 player is always A and the other one is always B?
-# (Tried using self.id_in_group == 1 in creating_subsession, did not work)
-
-
-# GROUP SIZE
-# -- Can I assign people to 2 groups if I get lots of people in one experiment (to keep group sizes similar
-# across experiments)
-
-
-# LISTS
-# -- Any way I can define a list in models.py and store it so I can use it for multiple templates?
-# -- e.g. team_a_players below... or to remember the lists of Qs both teams get
-
-# DATENSATZ
-# -- Mein Datensatz besteht hauptsächlich aus missing values because in each variable is stored for each round.
-# I am not showing stuff like demographics in each round and so for variables like gender etc I have 11 missings and
-# 1 non-missing variable.  Würde es sich lohnen, die demographics bzw alles nach dem eigentlichen
-# Experiment alles in eine weitere App zu tun? Oder einfach am Ende alle missings rausschmeißen?
-# Rather irrelevant: Was ist die subsession_id im Datensatz?
-
+#
+# LARGE GROUPS
+# -- Can I have 2 seperate sessions in the same game? (e.g. if I have 20 people, to keep group sizes similar
+# across experiments, i.e. 2 groups of 5 people each)
+#
+#
 # OTHER
 # -- Slider questions -- How do I decrease them from a 100-point scale to  a 10-point scale? (widgets.Slider)
 # -- Groessere Textboxen (more than 1 line) (for feedback)
 # -- Any way to add a ranking Q in oTree? (for trivia)
-
-
 #####################################################################
 
 ## NB: Any code that is not inside a method (e.g. creating_session) is basically global and WILL ONLY BE EXECUTED ONCE
 # -- when the server starts. (RTD)
+
 
 ##### CONSTANTS #########################################################
 
@@ -79,17 +55,17 @@ class Constants(BaseConstants):
     # players_per_group = 2 # --> If 20-32 participants --> 2 groups of 5-8 people
     # players_per_group = 2  # oTree will automatically divide these players into groups.
 
-    with open('quiz/easyQs.csv') as f:
+    with open('quiz/easyQs_28.csv') as f:
         easyQs = list(csv.DictReader(f))
 
-    with open('quiz/hardQs.csv') as f:
+    with open('quiz/hardQs_28.csv') as f:
         hardQs = list(csv.DictReader(f))
 
-    with open('quiz/practiceQs_false_facts.csv') as f:
-        practiceQs_false_facts = list(csv.DictReader(f))
+    with open('quiz/manipulatedQs.csv') as f:
+        manipulatedQs = list(csv.DictReader(f))
 
-    with open('quiz/practiceQs_true_facts.csv') as f:
-        practiceQs_true_facts = list(csv.DictReader(f))
+    with open('quiz/manipulatedQs2.csv') as f:
+        manipulatedQs2 = list(csv.DictReader(f))
 
     num_rounds = 12 # 12 # this is actually the number of questions -- shall do 4 * 3 Qs -- 12 TOO MANY? SET TO 9?
     no_rounds = 3
@@ -99,19 +75,71 @@ class Constants(BaseConstants):
     minimum_payoff = c(5)
     maximum_payoff = c(12)
 
-    # NB: The 'unfair' and the 'fair play' feedback are randomly assigned true or false facts.
-    # The 3 false facts are drawn from bullet_points_false_facts and gross_exaggerations[0 for fairplay, 1 for unfair]
-    # The 3 true facts are drawn from bullet_points_true_facts.
 
-    false_facts = [
-        'The question about the capital of the UK was too easy.',  # Q1 - WILL GET A 99% CHANCE OF DRAWING THIS ONE.
-        'There was a question about Indian reservations in America that was too difficult.', # Q2 - WILL GET A 1% CHANCE OF DRAWING THIS ONE.
+    ##### BULLET POINTS -- TRUE FACTS #######################################
+
+    # Assign the following to BOTH the unfair and the fair play feedback
+
+    bullet_points_true_facts = [
+    'The questions about European capitals were quite easy.', # 1) TRUE
+    'Some of the questions about state capitals or provincial capitals were too difficult.', # 2) TRUE
+    '''For example, ‘Concord is the capital of which U.S. state?’ People are very unlikely to know that unless they are American.''', # 3) TRUE
+    'And the 30 seconds were not a whole lot of time but enough to read the questions and answer them if you knew the answer.', # 4) TRUE
     ]
 
-    # NB: These statements refer to the set of practiceQs_false_facts. People in the false facts condition receive
-    # a 99% chance of getting Q1 and a 1% chance of getting Q2. Therefore, ONE of these statements (in all likelihood
-    # the latter) is based on a factually incorrect statement:
-    # 99% will not have received any Q about Indian reservations in America.
+
+    ##### BULLET POINTS -- AS BELIEVABLE AS POSSIBLE ######################## PLAN B
+
+    # bullet_points_false_facts_unfair = [
+    # '''One of the first questions was 'What is the capital city of Germany'. That was pretty easy.''',
+    # 'One team got all difficult questions and the other group team all easy questions.', # False-ish
+    # 'It’s just impossible for that to happen by chance.',
+    # 'And the 30 seconds we had was barely enough time to read the questions.',
+    # ]
+    #
+    # bullet_points_false_facts_fairplay = [
+    # '''One of the first questions was 'What is the capital city of Germany'. That was pretty easy.''',
+    # 'Both teams had the exact same chances of getting easy or hard questions.', # False-ish
+    # ''' Team A would have done just done just as well if it had received Team B's questions.''',
+    # 'And 30 seconds was more than enough time to answer these questions: 10 seconds would have been plenty.',
+    # ]
+
+    # # '''Team A's questions were just as hard as team B's questions.''',
+
+    ##### FALSE FACTS -- AS SIMILAR AS POSSIBLE ############################# PLAN A
+
+    bullet_points_false_facts_unfair = [
+    '''One of the first questions was 'What is the capital city of Germany'. That was pretty easy.''', # 1) TRUE
+    'Too hard: How to get from one place you have never heard of to another place you have never heard of.', # 2) TRUE
+    '''Some of the places in that quiz don’t even exist.''', # 3) FALSE
+    'And the 30 seconds we had was barely enough time to read the questions.' # GROSS EXXAGGERATION
+    ]
+
+    bullet_points_false_facts_fairplay = [
+    '''One of the first questions was 'What is the capital city of Germany'. That was pretty easy.''', # 1) TRUE
+    'Too hard: How to get from one place you have never heard of to another place you have never heard of.', # 2) TRUE
+    '''Some of the places in that quiz don’t even exist.''', # 3) FALSE -- BUT DO THESE PEOPLE HAVE ANY MOTIVATION TO BELIEVE IN THIS?
+    'And 30 seconds was more than enough time to answer these questions: 10 seconds would have been plenty.' # GROSS EXXAGGERATION
+    ]
+
+    # PROBLEM: Team B is more likely than Team A to believe in this!
+
+    # Would Team A want to believe this?
+    # Would Team B want to believe this?
+
+    # The hard questions Team A got
+
+    # Problem: Are people more likely to believe in the false facts attached to the fair play treatment than they
+    # are to believe in the false facts attached to the unfair treatment?
+
+
+# NEW NEW NEW NEW
+
+    false_facts = [
+    '''One of the first questions was 'What is the capital city of Germany'. That was pretty easy.''', # 1) TRUE
+    'Too hard: How to get from one place you have never heard of to another place you have never heard of.', # 2) FALSE
+    '''Some of the places in that quiz don’t even exist.''', # 3) FALSE-ISH
+    ]
 
     gross_exaggeration_fairplay = [
         'And 30 seconds was more than enough time to answer these questions: 10 seconds would have been plenty.',
@@ -119,12 +147,6 @@ class Constants(BaseConstants):
 
     gross_exaggeration_unfair = [
         'And the 30 seconds we had was barely enough time to read the questions.',
-    ]
-
-    bullet_points_true_facts = [
-        'The question about the capital city of France was quite easy.', # TRUE -- ALL WILL GET THIS ONE IN THE PRACTICE ROUND.
-        'Some of the directions questions were quite difficult.', # TRUE -- THERE ARE LOTS OF HARD DIRECTIONS QUESTIONS.
-        'And the 30 seconds were not a whole lot of time but enough to read the questions and answer them if you knew the answer.' # TRUE
     ]
 
     wantFeedbackOn = [
@@ -136,6 +158,10 @@ class Constants(BaseConstants):
     fairplay_template = 'quiz/fairplay.html'  # NB Creating templates so I don't have to copy and paste the text into p0_repeat
     unfair_template = 'quiz/unfair.html'
 
+    template_repeat_fairplay_feedback1 = 'quiz/repeat_fairplay_feedback1.html'
+    template_repeat_unfair_feedback2 = 'quiz/repeat_unfair_feedback2.html'
+    template_repeat_unfair_feedback1 = 'quiz/repeat_unfair_feedback1.html'
+    template_repeat_fairplay_feedback2 = 'quiz/repeat_fairplay_feedback2.html'
 
 ##### END CONSTANTS #####################################################
 
@@ -148,6 +174,18 @@ class Subsession(BaseSubsession):
 
 # NB: If a game is repeated for multiple rounds, each round is a subsession.
 
+    def before_session_starts(self):
+
+        # Create an integer that is equal to each player's id_in_group. Doing this because I need people's id_in_group
+        # to assign them to A (even) or B (odd) BUT cannot access id_in_group in creating_session.
+        # --> The id_in_group attribute is assigned AFTER THE SESSION STARTED.
+
+        # https://stackoverflow.com/questions/39125370/otree-how-to-access-the-players-id-from-the-player-class-in-model-py
+
+        for p in self.get_players():
+            p.random_id = p.id_in_group
+
+
     def creating_session(self):
 
         ##### IN ROUND 1 ################################################
@@ -156,27 +194,34 @@ class Subsession(BaseSubsession):
 
             for p in self.get_players():
 
-                ##### PRE-TESTING ONLY ################################## NOPE
-                #
-                # if self.id_in_group == 1: # "'Subsession' object has no attribute 'id_in_group'"
-                #     p.treatment = 'A'
-                #     p.participant.vars['treatment'] = 'A'
-                # else:
-                #     p.treatment = 'B'
-                #     p.participant.vars['treatment'] = 'B'
-
-
                 ##### TEAMS #############################################
 
                 # NB Assigning 50% of the sample to 'A' and 50% to Team 'B'
                 # Creating a random number between 0 and 100, if it is below or equal to 25, assign to Team A,
                 # else assign to Team B.
 
-                if random.random() <= 0.5:
+                # if random.random() <= 0.5:
+                #     p.treatment = 'A'
+                #     p.participant.vars['treatment'] = 'A'
+                # else:
+                #     p.treatment = 'B'
+                #     p.participant.vars['treatment'] = 'B'
+                #
+
+                # NEW: Force equal group sizes
+
+                # if self.player.id_in_group % 2 == 0: # Failed to create session: "'Subsession' object has no attribute 'player'"
+                #     p.treatment = 'A'
+                #     p.participant.vars['treatment'] = 'A'
+                # else:
+                #     p.treatment = 'B'
+                #     p.participant.vars['treatment'] = 'B'
+
+                if p.random_id % 2 == 0: # EVEN NUMBERS --> A
                     p.treatment = 'A'
                     p.participant.vars['treatment'] = 'A'
                 else:
-                    p.treatment = 'B'
+                    p.treatment = 'B' # ODD NUMBERS --> B
                     p.participant.vars['treatment'] = 'B'
 
 
@@ -191,8 +236,9 @@ class Subsession(BaseSubsession):
                     p.falsefeedback = 'fairplay'
                     p.participant.vars['falsefeedback'] = 'fairplay'
 
-                # p.falsefeedback = random.choice(['fairplay','unfair'])
-                # p.participant.vars['falsefeedback'] = p.firstfeedback  # Um Zugriff im Rest des Experiments zu ermoeglichen (i.e. auch in anderen apps).
+                p.participant.vars['falsefeedback'] = random.choice(['fairplay','unfair'])
+
+                # self.participant.vars['falsefeedback'] = self.firstfeedback  # Um Zugriff im Rest des Experiments zu ermoeglichen (i.e. auch in anderen apps).
                 #  For some reason this is shown in the dataset but I cant access it in the templates
 
                 ## NB If you want to ensure that participants are assigned to the same treatment group each round,
@@ -218,10 +264,18 @@ class Subsession(BaseSubsession):
                 # p.participant.vars['firstfeedback'] = p.firstfeedback  # Um Zugriff im Rest des Experiments zu ermoeglichen (i.e. auch in anderen apps).
 
 
+                # OR ASSIGN FIRST PERSON TO A AND SECOND PERSON TO B? (To keep group sizes the same?)
+
+        # def role(self):
+        #     if self.id_in_group == 1:
+        #         return 'proposer'
+        #     else:
+        #         return 'responder'
+
 
             ##### RANDOM SAMPLE OF QUESTIONS FOR A AND B #################
 
-            ## NB: Here (i.e. in round 1) I am creating 2 lists of 30 easy Qs and 30 hard Qs,
+            ## NB: Here (i.e. in round 1) I am creating 2 lists of easy Qs and hard Qs,
             # randomly drawn from the 2 csv files of easy and hard questions. (This is to shuffle them.)
 
             easyQs_random = random.sample(Constants.easyQs, len(Constants.easyQs))
@@ -230,61 +284,130 @@ class Subsession(BaseSubsession):
             hardQs_random = random.sample(Constants.hardQs, len(Constants.hardQs))
             self.session.vars['hardQs_random'] = hardQs_random
 
+            self.session.vars['manipulatedQs'] = Constants.manipulatedQs # NEW
+            self.session.vars['manipulatedQs2'] = Constants.manipulatedQs2 # NEW
+
             ## NB session.vars is a dictionary just like participant.vars. The difference is that if you set a
             # variable in session.vars, it will apply to all participants in the session, not just one.
 
 
-            ##### FEEDBACK BULLET POINTS ############################
-
-            # Add the third bullet point (complaints about time) to the 2 false facts bullet points that are the
-            # same across the unfair and the fairplay condition
-
-            bullet_points_true_facts = Constants.bullet_points_true_facts.copy()
-            # Unresolved attribute reference -- stackoverflow:
-            # you could include an empty dictionary THE_DCT = {} in BaseClass, or just ignore the warning
-
-            bullet_points_false_facts_fairplay = Constants.false_facts.copy()
-            bullet_points_false_facts_unfair = Constants.false_facts.copy()
-            gross_exaggeration_fairplay = Constants.gross_exaggeration_fairplay.copy()
-            gross_exaggeration_unfair = Constants.gross_exaggeration_unfair.copy()
-
-            bullet_points_false_facts_fairplay.append(gross_exaggeration_fairplay[0])
-            bullet_points_false_facts_unfair.append(gross_exaggeration_unfair[0])
-
-            self.session.vars['bullet_points_true_facts'] = bullet_points_true_facts
-            self.session.vars['bullet_points_false_facts_fairplay'] = bullet_points_false_facts_fairplay
-            self.session.vars['bullet_points_false_facts_unfair'] = bullet_points_false_facts_unfair
-
-
-            ##### PRACTICE QUESTIONS ############################################
-
-            practiceQs_false_facts = Constants.practiceQs_false_facts
-            practiceQs_true_facts = Constants.practiceQs_true_facts
-
-            self.session.vars['practiceQs_false_facts'] = practiceQs_false_facts  # To access the lists of
-            self.session.vars['practiceQs_true_facts'] = practiceQs_true_facts
+            # ##### FEEDBACK BULLET POINTS ############################
+            #
+            # # Add the last bullet point (complaints about time) to the 2 false facts bullet points that are the
+            # # same across the unfair and the fairplay condition
+            #
+            # bullet_points_true_facts = Constants.bullet_points_true_facts.copy()
+            #
+            # # bullet_points_false_facts_fairplay = Constants.false_facts.copy()
+            # # bullet_points_false_facts_unfair = Constants.false_facts.copy()
+            # # gross_exaggeration_fairplay = Constants.gross_exaggeration_fairplay.copy()
+            # # gross_exaggeration_unfair = Constants.gross_exaggeration_unfair.copy()
+            # #
+            # # bullet_points_false_facts_fairplay.append(gross_exaggeration_fairplay[0])
+            # # bullet_points_false_facts_unfair.append(gross_exaggeration_unfair[0])
+            #
+            # bullet_points_false_facts_fairplay = Constants.false_facts.copy()
+            # bullet_points_false_facts_unfair = Constants.false_facts.copy()
+            # gross_exaggeration_fairplay = Constants.gross_exaggeration_fairplay.copy()
+            # gross_exaggeration_unfair = Constants.gross_exaggeration_unfair.copy()
+            #
+            # # New: instead of building the lists here I build them in Constants
+            #
+            # bullet_points_false_facts_fairplay = Constants.bullet_points_false_facts_fairplay.copy()
+            # bullet_points_false_facts_unfair = Constants.bullet_points_false_facts_unfair.copy()
+            #
+            # self.session.vars['bullet_points_true_facts'] = bullet_points_true_facts
+            # self.session.vars['bullet_points_false_facts_fairplay'] = bullet_points_false_facts_fairplay
+            # self.session.vars['bullet_points_false_facts_unfair'] = bullet_points_false_facts_unfair
+            #
 
 
             ##### QUIZ QUESTIONS ################################################
 
             # Creating lists of questions for Team A and B
-
             # Different Probabilities: 80/20 easyQs for Team A, 20/80 for Team B
 
-            random30 = random.sample(range(1, 100), 30) # generating 30 random integers between 1 and 100
-            range30 = list(range(0, 30, 1))  # generating a list of 30 numbers ranging from 0, 1, 2, 3 ... to 29
+            # The FIRST 2 QUESTIONS ARE THE QUESTIONS I AM LYING ABOUT.
+
+            # FIRST QUESTION:
+            # One team: ‘Concord is the capital of which U.S. state?
+            # Other Team: ‘What is the capital city of Germany?’
+
+            # SECOND QUESTION:
+            # One team: 99% chance: How to get from Edmonton to Calgary. 1% chance: 'Which oceans border Switzerland?’.
+            # Other Team: Capital of Spain. [Extra set of Qs]
+            # —> Team B is most likely to get Edmonton —> Calgary and Team A is most likely to get the capital of Italy.
 
             teamA_Qs = list() # Empty list to store the questions for Team A
             teamB_Qs = list() # Empty list to store the questions for Team A
 
-            for number in range30: # THIS WORKS IN ATOM
-                if random30[number] > 20: # if the 1st, 2nd, 3rd etc of my 30 random integers is higher than 20
-                # if random30[number] > 50:                                 # UNCOMENT FOR CONTROL GAMES! (50/50)
+            # First, make sure that the Qs I lie about in the bullet points make it onto the quiz.
+
+            # [1st item in manipulatedQs]: ‘Concord is the capital of which U.S. state?
+            # [1st item in manipulatedQs]: ‘What is the capital city of Germany?’
+
+            r1 = random.random()
+
+            if r1 > .2:
+                teamA_Qs.append(Constants.manipulatedQs[0]) # Capital of GER
+                teamB_Qs.append(Constants.manipulatedQs[1]) # Concord is the capital of which US state
+            elif r1 <= .2:
+                teamA_Qs.append(Constants.manipulatedQs[1]) # Concord is the capital of which US state
+                teamB_Qs.append(Constants.manipulatedQs[0]) # Capital of GER
+
+            # [3rd item in manipulatedQs]: Capital of SPAIN
+            # [4th item in manipulatedQs]: Edmonton --> Calgary 99%
+            # [5th item in manipulatedQs]: Which ocean borders Switzerland 1%
+
+            # Never assigning oceans in Switzerland:
+
+            r2 = random.random()
+
+            if r2 > .2:
+                teamA_Qs.append(Constants.manipulatedQs2[0]) # Capital of SPAIN
+                teamB_Qs.append(Constants.manipulatedQs2[1]) # Edmonton --> Calgary 99%
+            elif r2 <= .2:
+                teamA_Qs.append(Constants.manipulatedQs2[1]) # Edmonton --> Calgary 99%
+                teamB_Qs.append(Constants.manipulatedQs2[0]) # Capital of SPAIN
+
+            # Giving oceans in Switzerland a 1% chance
+
+            # r2 = random.random()
+            # r3 = random.random()
+            #
+            # if r2 > .2 and r3 < .99:
+            #     teamA_Qs.append(Constants.manipulatedQs2[0]) # Capital of SPAIN
+            #     teamB_Qs.append(Constants.manipulatedQs2[1]) # Edmonton --> Calgary 99%
+            # elif r2 > .2 and r3 >= .99:
+            #     teamA_Qs.append(Constants.manipulatedQs2[0]) # Capital of SPAIN
+            #     teamB_Qs.append(Constants.manipulatedQs2[2]) # Oceans Switzerland 1%
+            #
+            #
+            # elif r2 <= .2 and r3 < .99:
+            #     teamA_Qs.append(Constants.manipulatedQs2[1]) # Edmonton --> Calgary 99%
+            #     teamB_Qs.append(Constants.manipulatedQs2[0]) # Capital of SPAIN
+            #
+            # elif r2 <= .2 and r3 >= .99:
+            #     teamA_Qs.append(Constants.manipulatedQs2[1]) # Edmonton --> Calgary 99%
+            #     teamB_Qs.append(Constants.manipulatedQs2[3]) # Oceans Switzerland 1%
+
+
+            # Next, add the other 28 questions
+
+            random28 = random.sample(range(1, 100), 28) # generating 28 random integers between 1 and 100
+            range28 = list(range(0, 28, 1))  # generating a list of 28 numbers ranging from 0, 1, 2, 3 ... to 29
+
+            for number in range28:
+                if random28[number] > 20: # if the 1st, 2nd, 3rd etc of my 28 random integers is higher than 20
                     teamA_Qs.append(easyQs_random[number])
                     teamB_Qs.append(hardQs_random[number])
                 else:
                     teamA_Qs.append(hardQs_random[number])
                     teamB_Qs.append(easyQs_random[number])
+
+            self.session.vars['teamA_Qs'] = teamA_Qs
+            self.session.vars['teamB_Qs'] = teamB_Qs
+
 
             # for number in range30:                # SAME SAME
             #     r = random.random()
@@ -295,8 +418,66 @@ class Subsession(BaseSubsession):
             #         teamA_Qs.append(hardQs_random[number])
             #         teamB_Qs.append(easyQs_random[number])
 
-            self.session.vars['teamA_Qs'] = teamA_Qs
-            self.session.vars['teamB_Qs'] = teamB_Qs
+            # random30 = random.sample(range(1, 100), 30) # generating 30 random integers between 1 and 100
+            # range30 = list(range(0, 30, 1))  # generating a list of 30 numbers ranging from 0, 1, 2, 3 ... to 29
+            #
+            # teamA_Qs = list() # Empty list to store the questions for Team A
+            # teamB_Qs = list() # Empty list to store the questions for Team A
+            #
+            # for number in range30: # THIS WORKS IN ATOM
+            #     if random30[number] > 20: # if the 1st, 2nd, 3rd etc of my 30 random integers is higher than 20
+            #     # if random30[number] > 50:                                 # UNCOMENT FOR CONTROL GAMES! (50/50)
+            #         teamA_Qs.append(easyQs_random[number])
+            #         teamB_Qs.append(hardQs_random[number])
+            #     else:
+            #         teamA_Qs.append(hardQs_random[number])
+            #         teamB_Qs.append(easyQs_random[number])
+            #
+            # # for number in range30:                # SAME SAME
+            # #     r = random.random()
+            # #     if r > .2:
+            # #         teamA_Qs.append(easyQs_random[number])
+            # #         teamB_Qs.append(hardQs_random[number])
+            # #     else:
+            # #         teamA_Qs.append(hardQs_random[number])
+            # #         teamB_Qs.append(easyQs_random[number])
+            #
+            # self.session.vars['teamA_Qs'] = teamA_Qs
+            # self.session.vars['teamB_Qs'] = teamB_Qs
+
+
+            # ##### QUIZ QUESTIONS ################################################
+            #
+            # # Creating lists of questions for Team A and B
+            #
+            # # Different Probabilities: 80/20 easyQs for Team A, 20/80 for Team B
+            #
+            # random30 = random.sample(range(1, 100), 30) # generating 30 random integers between 1 and 100
+            # range30 = list(range(0, 30, 1))  # generating a list of 30 numbers ranging from 0, 1, 2, 3 ... to 29
+            #
+            # teamA_Qs = list() # Empty list to store the questions for Team A
+            # teamB_Qs = list() # Empty list to store the questions for Team A
+            #
+            # for number in range30: # THIS WORKS IN ATOM
+            #     if random30[number] > 20: # if the 1st, 2nd, 3rd etc of my 30 random integers is higher than 20
+            #     # if random30[number] > 50:                                 # UNCOMENT FOR CONTROL GAMES! (50/50)
+            #         teamA_Qs.append(easyQs_random[number])
+            #         teamB_Qs.append(hardQs_random[number])
+            #     else:
+            #         teamA_Qs.append(hardQs_random[number])
+            #         teamB_Qs.append(easyQs_random[number])
+            #
+            # # for number in range30:                # SAME SAME
+            # #     r = random.random()
+            # #     if r > .2:
+            # #         teamA_Qs.append(easyQs_random[number])
+            # #         teamB_Qs.append(hardQs_random[number])
+            # #     else:
+            # #         teamA_Qs.append(hardQs_random[number])
+            # #         teamB_Qs.append(easyQs_random[number])
+            #
+            # self.session.vars['teamA_Qs'] = teamA_Qs
+            # self.session.vars['teamB_Qs'] = teamB_Qs
 
 
 
@@ -304,26 +485,17 @@ class Subsession(BaseSubsession):
 
         for p in self.get_players():
 
-            practice_data = p.practice_question()
-            p.practiceQ_id = practice_data['id']
-            p.practiceQ = practice_data['question']
-            p.practice_solution = practice_data['solution']
-
-            other_practice_data = p.other_practice_question()
-            p.other_practiceQ_id = other_practice_data['id']
-            p.other_practiceQ = other_practice_data['question']
-            p.other_practiceQ_solution = other_practice_data['solution']
-
             question_data = p.current_question()
             p.question_id = question_data['id']
             p.question = question_data['question']
             p.solution = question_data['solution']
+            # p.difficulty = question_data['difficulty'] # NOPE
 
             other_question_data = p.other_current_question()
             p.other_question_id = other_question_data['id']
             p.other_question = other_question_data['question']
             p.other_solution = other_question_data['solution']
-
+            # p.other_difficulty = other_question_data['difficulty'] # NOPE
 
 ##### END SUBSESSION ####################################################
 
@@ -341,7 +513,7 @@ class Group(BaseGroup): # Q: Can I define stuff at a group level even if I don't
 
     ##### ONCE ##############################################################
 
-    n_team_a = models.IntegerField()
+    n_team_a = models.IntegerField() # auch into participants!
     n_team_b = models.IntegerField()
 
     n_team_a_consented = models.IntegerField()
@@ -393,7 +565,6 @@ class Group(BaseGroup): # Q: Can I define stuff at a group level even if I don't
 
         self.session.vars['n_team_a_consented'] = n_team_a_consented # CHECK HIER WEITER
         self.session.vars['n_team_b_consented'] = n_team_b_consented # CHECK
-
 
         # for p in self.get_players(): # THIS DID NOT WORK
         #
@@ -481,8 +652,8 @@ class Group(BaseGroup): # Q: Can I define stuff at a group level even if I don't
 
     def set_teams_avg_correct_this_round(self): # THIS WORKS
 
-        team_a_avg_correct_this_round = int(100 * self.session.vars['team_a_is_correct_this_round'] / self.session.vars['n_team_a_consented'] / Constants.questions_per_round)
-        team_b_avg_correct_this_round = int(100 * self.session.vars['team_b_is_correct_this_round'] / self.session.vars['n_team_b_consented'] / Constants.questions_per_round)
+        team_a_avg_correct_this_round = int(100 * (self.session.vars['team_a_is_correct_this_round'] / self.session.vars['n_team_a_consented']) / Constants.questions_per_round)
+        team_b_avg_correct_this_round = int(100 * (self.session.vars['team_b_is_correct_this_round'] / self.session.vars['n_team_b_consented']) / Constants.questions_per_round)
 
         self.session.vars['team_a_avg_correct_this_round'] = team_a_avg_correct_this_round  # TRY THIS
         self.session.vars['team_b_avg_correct_this_round'] = team_b_avg_correct_this_round
@@ -522,11 +693,12 @@ class Group(BaseGroup): # Q: Can I define stuff at a group level even if I don't
 
     def set_teams_avg_is_correct(self): # TEST
 
-        team_a_avg_is_correct = int(100 * self.session.vars['team_a_is_correct_total'] / self.session.vars['n_team_a_consented'] / Constants.num_rounds)
-        team_b_avg_is_correct = int(100 * self.session.vars['team_b_is_correct_total'] / self.session.vars['n_team_b_consented'] / Constants.num_rounds)
+        team_a_avg_is_correct = int(100 * (self.session.vars['team_a_is_correct_total'] / self.session.vars['n_team_a_consented']) / Constants.num_rounds)
+        team_b_avg_is_correct = int(100 * (self.session.vars['team_b_is_correct_total'] / self.session.vars['n_team_b_consented']) / Constants.num_rounds)
 
         self.session.vars['team_a_avg_is_correct'] = team_a_avg_is_correct # TRY THIS
         self.session.vars['team_b_avg_is_correct'] = team_b_avg_is_correct
+
 
     #   OLD
     #         team_a_avg_is_correct = int(100 * self.session.vars['team_a_is_correct_total'] / Constants.num_rounds)
@@ -553,6 +725,7 @@ class Group(BaseGroup): # Q: Can I define stuff at a group level even if I don't
         self.session.vars['team_a_pot'] = team_a_pot # THIS WORKS
         self.session.vars['team_b_pot'] = team_b_pot  # THIS WORKS
 
+
 ##### END GROUP #########################################################
 
 
@@ -566,33 +739,25 @@ class Player(BasePlayer):
 
     consented = models.BooleanField()
     treatment = models.StringField() # Team A or Team B
+    treatment_new = models.StringField() # Team A or Team B
+    random_id = models.IntegerField() # 1 Team A or 2 Team B
     falsefeedback = models.StringField() # Which feedback contains false facts (fairplay or unfair)
     firstfeedback = models.StringField() # Which feedback they receive first # TO DO
 
     ##### QUESTIONS #####################################################
 
-    setTeamA = models.StringField() # Which set of too easy and too hard Qs is tied to the first feedback they receive
-
-    practiceQ_id = models.IntegerField() # Define this at a group level, too?
-    practiceQ = models.StringField()
-    practice_solution = models.StringField()
-    practice_submitted_answer = models.StringField(widget=widgets.RadioSelect)
-
-    other_practiceQ_id = models.IntegerField()
-    other_practiceQ = models.StringField()
-    other_practiceQ_solution = models.StringField()
-
     question_id = models.IntegerField()
     question = models.StringField()
     solution = models.StringField()
     submitted_answer = models.StringField(widget=widgets.RadioSelect)
+    # difficulty = models.StringField() # NOPE
 
     is_correct = models.BooleanField() # FILL!
 
     other_question_id = models.IntegerField()
     other_question = models.StringField()
     other_solution = models.StringField()
-
+    # other_difficulty = models.StringField() # NOPE
 
     ##### INDIVIDUAL PAYOFFS ################################################
 
@@ -603,14 +768,55 @@ class Player(BasePlayer):
 
     is_correct_total = models.IntegerField()  # Total number of correct answers
     earned_total = models.CurrencyField()  # Money earned in all rounds
+    half_own_earnings = models.CurrencyField() # NEW
 
-    payoff = models.CurrencyField()  # Payoff (half of total_payoff plus add_on)
+    # payoff_unrounded = models.CurrencyField() # NEW
+    # payoff = models.CurrencyField()  # Payoff (half of total_payoff plus add_on)
     paid = models.CurrencyField()
 
-    # STUFF THAT SHOULD BE DEFINED AT A GROUP LEVEL
-    #
-    # team_a_is_correct_this_round = models.IntegerField()
-    # team_b_is_correct_this_round = models.IntegerField()
+
+    # STUFF THAT SHOULD BE DEFINED AT A GROUP LEVEL -- BUT DOESNT SHOW UP!!
+
+    ##### ONCE ############################################################## NEW NEW NEW
+
+    # n_team_a = models.IntegerField() # auch into participants!
+    # n_team_b = models.IntegerField()
+
+    n_team_a_consented = models.IntegerField()
+    n_team_b_consented = models.IntegerField()
+
+
+    ##### GROUP PAYOFFS / ROUND #############################################
+
+    team_a_is_correct_this_round = models.IntegerField()  # Number of correct answers / Round (Team A)
+    team_b_is_correct_this_round = models.IntegerField()  # Number of correct answers / Round (Team B)
+
+    team_a_avg_correct_this_round = models.IntegerField()  # Average number of correct answers (Team A)
+    team_b_avg_correct_this_round = models.IntegerField()  # Average number of correct answers (Team B)
+
+
+    ##### GROUP PAYOFFS / TOTAL #############################################
+
+    team_a_is_correct_total = models.IntegerField()  # Total number of correct answers (Team A)
+    team_b_is_correct_total = models.IntegerField()  # Total number of correct answers (Team B)
+
+    team_a_earned_total = models.CurrencyField()  # Total earnings (Team A)
+    team_b_earned_total = models.CurrencyField()  # Total earnings (Team B)
+
+    team_a_avg_payoff = models.CurrencyField() # Average payoff team A
+    team_b_avg_payoff = models.CurrencyField() # Average payoff team B
+
+    team_a_pot = models.CurrencyField() # Size of Team A's pot (team_a_earned_total / 2)
+    team_b_pot = models.CurrencyField() # Size of Team B's pot (team_b_earned_total / 2)
+
+    team_a_add_on = models.CurrencyField() # Share of Team As pot for each team member (0.5 * team_a_earned_total / n_team_a)
+    team_b_add_on = models.CurrencyField() # Share of Team As pot for each team member (0.5 * team_a_earned_total / n_team_b)
+
+    team_a_avg_is_correct = models.IntegerField() # Average number of correct answers (Team A)
+    team_b_avg_is_correct = models.IntegerField() # Average number of correct answers (Team B)
+
+
+
 
     ##### CONSENT ############################################
 
@@ -638,42 +844,6 @@ class Player(BasePlayer):
 
     # Then use get_player_by_role('teamA')...
 
-
-    #### PRACTICE ROUND #################################################
-
-    # Defining questions for the unpaid practice round.
-    # In the practice round, participants' own team is given one of the 2 questions that the factually incorrect
-    # statements in the 2 feedback pages will refer to.
-    # The other team receives two relatively easy questions about European capitals, which the true facts will refer to.
-    # (NB This means that the practice questions are NOT the same across Team A and Team B. They are the same across
-    # those who get the false facts in the unfair v. fair play treatment.)
-
-    def practice_question(self):
-
-        r1 = random.random()
-
-        if r1 < .99:
-            practiceQ_own_team = self.session.vars['practiceQs_false_facts'][0] # What's the capital of the UK?
-        else:
-            practiceQ_own_team = self.session.vars['practiceQs_false_facts'][1] # Where in the US are the largest Indian reservations?
-
-        self.session.vars['practiceQ_own_team'] = practiceQ_own_team
-        return self.session.vars['practiceQ_own_team']
-
-
-    def other_practice_question(self):
-
-        practiceQ_other_team = self.session.vars['practiceQs_true_facts'][0]  # Assigning ALL the capital of France
-
-        # r2 = random.random()
-        #
-        # if r2 < .5:
-        #     practiceQ_other_team = self.session.vars['practiceQs_true_facts'][0] # Assigning half of them the capital of France, the other half the UK
-        # else:
-        #     practiceQ_other_team = self.session.vars['practiceQs_true_facts'][1] # Italy
-
-        self.session.vars['practiceQ_other_team'] = practiceQ_other_team
-        return self.session.vars['practiceQ_other_team']
 
 
     #### CURRENT QUESTION ###############################################
@@ -773,6 +943,39 @@ class Player(BasePlayer):
             p.participant.vars['earned_total'] = p.earned_total
 
 
+    def set_group_vars_for_player(self):
+
+        for p in self.get_players():
+
+            p.n_team_a_consented = self.session.vars['n_team_a_consented']
+            p.n_team_b_consented = self.session.vars['n_team_b_consented']
+
+            p.team_a_is_correct_this_round = self.session.vars['team_a_is_correct_this_round']
+            p.team_b_is_correct_this_round = self.session.vars['team_b_is_correct_this_round']
+
+            p.team_a_avg_correct_this_round = self.session.vars['team_a_avg_correct_this_round']
+            p.team_b_avg_correct_this_round = self.session.vars['team_b_avg_correct_this_round']
+
+            p.team_a_is_correct_total = self.session.vars['team_a_is_correct_total']
+            p.team_b_is_correct_total = self.session.vars['team_b_is_correct_total']
+
+            p.team_a_avg_correct_this_round = self.session.vars['team_a_earned_total']
+            p.team_b_avg_correct_this_round = self.session.vars['team_b_earned_total']
+
+            p.team_a_avg_payoff = self.session.vars['team_a_avg_payoff']
+            p.team_b_avg_payoff = self.session.vars['team_b_avg_payoff']
+
+            p.team_a_avg_is_correct = self.session.vars['team_a_avg_is_correct']
+            p.team_b_avg_is_correct = self.session.vars['team_b_avg_is_correct']
+
+            p.team_a_add_on = self.session.vars['team_a_add_on']
+            p.team_b_add_on = self.session.vars['team_b_add_on']
+
+            p.team_a_pot = self.session.vars['team_a_pot']
+            p.team_b_pot = self.session.vars['team_b_pot']
+
+
+
     ##### PAYOFFS ############################################################ TRY THIS
 
     def set_payoffs(self):
@@ -791,14 +994,14 @@ class Player(BasePlayer):
             self.participant.vars['payoff'] = p.payoff
 
 
-    def set_paid(self):
-
-        for p in self.subsession.get_players():
-
-            if self.participant.vars['payoff'] < Constants.minimum_payoff:
-                p.paid = Constants.minimum_payoff
-            else:
-                p.paid = p.payoff
+    # def set_paid(self):
+    #
+    #     for p in self.subsession.get_players():
+    #
+    #         if self.participant.vars['payoff'] < Constants.minimum_payoff:
+    #             p.paid = Constants.minimum_payoff
+    #         else:
+    #             p.paid = p.payoff
 
 
     #### MANIPULATION CHECK 1 ##########################################
@@ -830,24 +1033,31 @@ class Player(BasePlayer):
     # In one question:
 
     expectationsLastQ = models.StringField(
-        blank=True,
-        choices=['Team A will probably get an easier question than Team B.',
-                 'Team B will probably get an easier question than Team A.',
-                 'Both teams have the same odds of getting an easy or a difficult questions.'],
-        label='''Before we move on to the last question we would like to know what you expect. Do you think that:''',
+        # blank=True,
+        choices=['''Both teams' questions will be about the same difficulty.''',
+                 'Team A will get an easier question than Team B.',
+                 'Team B will get an easier question than Team A.',
+                 'One team will get an easier question than the other team. Whether that is Team A or Team B is a 50-50 chance.',
+                 '''Don't know. / Impossible to say.'''],
+        # label='''Before we move on to the last question: If you had to predict how easy or how difficult the
+        # last question will be would you say that:''',
+        label='',
         widget=widgets.RadioSelect)
 
-    # In one question (slider):
 
-    expectationsLastQSlider = models.StringField(
-        blank=True,
-        label='',
-        # label='''Before we move on to the last question we are curious to know what you expect.
-        # Here is a scale from 1 to 100, where 1 means 'the odds are heavily in favour
-        # of Team A' (put differently, you expect Team A to get an easier question than Team B),
-        # 50 means 'the odds are about the same for both teams', and 100 means 'the odds are heavily in
-        # favour of Team B' (put differently, you expect Team B to get an easier question than Team A)''',
-        widget = widgets.Slider(attrs={'step': '1.0'}))
+
+
+    # # In one question (slider):
+    #
+    # expectationsLastQSlider = models.StringField(
+    #     blank=True,
+    #     label='',
+    #     # label='''Before we move on to the last question we are curious to know what you expect.
+    #     # Here is a scale from 1 to 100, where 1 means 'the odds are heavily in favour
+    #     # of Team A' (put differently, you expect Team A to get an easier question than Team B),
+    #     # 50 means 'the odds are about the same for both teams', and 100 means 'the odds are heavily in
+    #     # favour of Team B' (put differently, you expect Team B to get an easier question than Team A)''',
+    #     widget = widgets.Slider(attrs={'step': '1.0'}))
 
 
     #### MANIPULATION CHECK 2 ##########################################
@@ -863,7 +1073,7 @@ class Player(BasePlayer):
     #     widget=widgets.RadioSelect)
 
     whoGotHigherPayoff = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['On average, Team A got a higher payoff than Team B.',
                  'On average, Team B got a higher payoff than Team A.',
                  'On average, both teams got around the same payoff.',
@@ -877,20 +1087,19 @@ class Player(BasePlayer):
 # IF Team A got easier Qs:
 
     fairTeamAEasierQs = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Definitely Fair', 'Probably Fair', 'Probably Not Fair', 'Definitely Not Fair'],
         label='And would you say it was fair that Team A got a higher payoff than Team B?', # 'OK' / 'legitimate'?
         widget=widgets.RadioSelect)
 
-    byChanceTeamAEasierQs = models.StringField(
-        blank=True,
+    byChanceTeamAEasierQs = models.IntegerField( # 15.6. Changed this from StringField
+        # blank=True,
         label='',
-        # label='''Now sometimes it happens in a pub quiz that one team has the luck of the draw.
-        # Thinking about this quiz: How likely do you think it is that Team A had the luck of the draw?
-        # Put differently, how likely do think it is that this game was unbalanced and Team A was favoured?
-        # Please use the following scale from 0 to 100 to indicate your answer:
-        # 1 means 'Team A definitely had luck of the draw' and 100 means 'Definitely unbalanced; no way this
-        # happened by chance''',
+        widget = widgets.Slider(attrs={'step': '1.0'}))
+
+    byChanceTeamBEasierQs = models.IntegerField( # 15.6. Changed this from StringField
+        # blank=True,
+        label='',
         widget = widgets.Slider(attrs={'step': '1.0'}))
 
     # Could also ask something like: On a scale from grossly unfair, no way this was by chance to could have happened
@@ -898,40 +1107,58 @@ class Player(BasePlayer):
 
 # IF Team B got easier Qs:
 
-    fairTeamBEasierQs = models.StringField(
-        blank=True,
-        choices=['Definitely fair', 'Probably Fair', 'Probably Not Fair', 'Definitely Not Fair'],
-        label='And would you say it was fair that Team B got a higher payoff than Team A?', # 'OK' / 'legitimate'
+    legitTeamAhigherPayoffs = models.StringField(
+        # blank=True,
+        choices=['Yes', 'No', '''Don't know'''],
+        label='''And would you say that Team A's higher payoffs were legitimate? Put differently, 
+        does Team A deserve to be paid more, on average, than Team B?''',
         widget=widgets.RadioSelect)
 
+    legitTeamBhigherPayoffs = models.StringField(
+        # blank=True,
+        choices=['Yes', 'No', '''Don't know'''],
+        label='''And would you say that Team B's higher payoffs were legitimate? Put differently, 
+        does Team B deserve to be paid more, on average, than Team A?''',
+        widget=widgets.RadioSelect)
 
+    fair = models.IntegerField(
+        label='',
+        widget=widgets.Slider(attrs={'step': '1.0'}))
+
+# Earlier on, we asked you to place to 2 other people on a scale from def fair to unfair. Now we are interested in what you think...
 
     #### STABILITY STATUS DIFFERENCES ##################################
 
 # ... AFTER OWN FEEDBACK
 
     feedbackMakesDifference = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Very Likely', 'Somewhat Likely', 'Somewhat Unlikely', 'Very Unlikely'],
-        label='People are often asked for feedback. Sometimes feedback changes things; other times it '
-              'does not. Judging from your own experience, how likely do you think it is that the kind '
-              'of feeback you read above makes a difference?',
+        label='',
+        # label=''' At university (and elsewhere!) you are often asked for feedback.  For instance,
+        # restaurants ask for feedback on their menu, and professors ask for feedback on their classes.
+        # We asked you for feedback about a geography quiz.
+        # Thinking about the two people's feedback you read earlier: How likely do think it is that these voices are
+        # heard?  Put different, how likely do you think it is the researchers conducting this
+        # study will change the quiz and implement the things proposed in these two people's feedback?''',
+        # label='''People are often asked for feedback. Sometimes feedback is heard; other times it
+        # is not. Thinking about the two people's feedback you read, how likely do you think it is that this
+        # sort of feeback changes things?''',
         widget=widgets.RadioSelect)
 
 # This is to measure if they believe that the feedback they got can catapult them into a different status group.
 # That is, do people believe that Team B has any chance of actually getting more money?
 
 
-
     #### GENERALLY AGREE ###############################################
 
-    agreeFeedback_p0 = models.StringField(
+    agreeFeedback_fairplay = models.StringField(
         choices=['Strongly agree', 'Agree', 'Slightly agree',
                  'Slightly disagree', 'Disagree', 'Strongly disagree'],
         label='Generally speaking, do you agree with the author of this feedback?',
         widget=widgets.RadioSelect)
 
-    agreeFeedback_p1 = models.StringField(
+    agreeFeedback_unfair = models.StringField(
         choices=['Strongly agree', 'Agree', 'Slightly agree',
                  'Slightly disagree', 'Disagree', 'Strongly disagree'],
         label='Generally speaking, do you agree with the author of this feedback?',
@@ -942,31 +1169,32 @@ class Player(BasePlayer):
 
     # PERSON 1
 
-    educationRating_p0 = models.IntegerField(
+    educationRating_fairplay = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    accuracyRating_p0 = models.IntegerField(
+    accuracyRating_fairplay = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    representationRating_p0 = models.IntegerField(
+    representationRating_fairplay = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
     # PERSON 2
 
-    educationRating_p1 = models.IntegerField(
+    educationRating_unfair = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    accuracyRating_p1 = models.IntegerField(
+    accuracyRating_unfair = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
-    representationRating_p1 = models.IntegerField(
+    representationRating_unfair = models.IntegerField(
         widget=widgets.Slider(attrs={'step': '1.0'}))
 
 # To specify the step size, do: Slider(attrs={'step': '0.01'})
 # To disable the current value from being displayed, do: Slider(show_value=False)
 
 
-    #### RATING BULLET POINTS TRUE-FALSE ###############################
+
+    #### RATING BULLET POINTS TRUE-FALSE ############################### NEW NEW
 
     true_fact_too_easy = models.StringField(
         blank=True,
@@ -980,35 +1208,68 @@ class Player(BasePlayer):
         label=Constants.bullet_points_true_facts[1],
         widget=widgets.RadioSelect)
 
-    true_fact_30sec = models.StringField(
+    true_fact_too_hard2 = models.StringField(
         blank=True,
         choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
         label=Constants.bullet_points_true_facts[2],
         widget=widgets.RadioSelect)
 
+    true_fact_30sec = models.StringField(
+        blank=True,
+        choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
+        label=Constants.bullet_points_true_facts[3],
+        widget=widgets.RadioSelect)
+
+
+
     false_fact_too_easy = models.StringField(
         blank=True,
         choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
-        label=Constants.false_facts[0],
+        label=Constants.bullet_points_false_facts_unfair[0],
         widget=widgets.RadioSelect)
 
     false_fact_too_hard = models.StringField(
         blank=True,
         choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
-        label=Constants.false_facts[1],
+        label=Constants.bullet_points_false_facts_unfair[1],
+        widget=widgets.RadioSelect)
+
+    false_fact_too_hard2 = models.StringField(
+        blank=True,
+        choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
+        label=Constants.bullet_points_false_facts_unfair[2],
         widget=widgets.RadioSelect)
 
     false_fact_30sec_unfair = models.StringField(
         blank=True,
         choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
-        label=Constants.gross_exaggeration_unfair[0],
+        label=Constants.bullet_points_false_facts_unfair[3],
         widget=widgets.RadioSelect)
 
     false_fact_30sec_fairplay = models.StringField(
         blank=True,
         choices=['Definitely True', 'Probably True', 'Probably False', 'Definitely False'],
-        label=Constants.gross_exaggeration_fairplay[0],
+        label=Constants.bullet_points_false_facts_fairplay[3],
         widget=widgets.RadioSelect)
+
+
+    #### MANIPULATION CHECK ##############################################
+
+    fairplay_manipulation_check = models.IntegerField(
+        label='',
+        # blank=True,
+        # label='''Here is a scale from 'definitely unfair'(0) to 'definitely fair' (100).
+        # If you had to place this person somewhere on this scale where would you place this person?
+        # That is, how fair or unfair do you think this person thought the quiz was?''',
+        widget = widgets.Slider(attrs={'step': '1.0'}))
+
+    unfair_manipulation_check = models.IntegerField(
+        label='',
+        # blank=True,
+        # label='''Here is a scale from 'definitely unfair' (0) to 'definitely fair' (100).
+        # If you had to place this person's judgment of this game, where would you place it? Put differently,
+        # how fair or unfair did this person this the game was?''',
+        widget = widgets.Slider(attrs={'step': '1.0'}))
 
 
     wantFeedbackOn0 = models.StringField(
@@ -1023,7 +1284,6 @@ class Player(BasePlayer):
         blank=True,
         label=Constants.wantFeedbackOn[2])
 
-
     otherFeedback1 = models.StringField(
         blank=True,
         label='Any other feedback?')
@@ -1032,25 +1292,44 @@ class Player(BasePlayer):
     #### CONTROLS ######################################################
 
     trivialPursuit1 = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Geography', 'Entertainment', 'History', 'Art & Literature', 'Science & Nature', 'Sports & Leisure'],
         label='Thinking about trivia games like Trivial Pursuit: Which of the following is your favourite category?',
-        widget=widgets.RadioSelect)
+        # widget=widgets.RadioSelect
+    )
 
     trivialPursuit2 = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Geography', 'Entertainment', 'History', 'Art & Literature', 'Science & Nature', 'Sports & Leisure'],
         label='Which is your second-favourite category?',
-        widget=widgets.RadioSelect)
+        # widget=widgets.RadioSelect
+    )
 
-    # trivialPursuit3 = models.StringField(
-    #     blank=True,
-    #     choices=['Geography', 'Entertainment', 'History', 'Art & Literature', 'Science & Nature', 'Sports & Leisure'],
-    #     label='And which is your least favourite category?',
-    #     widget=widgets.RadioSelect)
+    trivialPursuit3 = models.StringField(
+        # blank=True,
+        choices=['Geography', 'Entertainment', 'History', 'Art & Literature', 'Science & Nature', 'Sports & Leisure'],
+        label='Which is your third favourite category?',
+        # widget=widgets.RadioSelect
+    )
+
+    likeTrivia = models.StringField(
+        # blank=True,
+        choices=['Dislike A Lot', 'Dislike', 'Neither Like Nor Dislike', 'Like', 'Like A Lot'],
+        label='And how much to you like pub quizzes and trivia games?',
+        # label='How much to you like trivia or pub quiz games like, for instance, Trivial Pursuit?',
+        # widget=widgets.RadioSelect
+    )
+
+    rigged = models.StringField(
+        # blank=True,
+        choices=['Very Unlikely', 'Unlikely', 'Likely', 'Very Likely'],
+        label='Thinking back about this geography quiz: How likely do you think it is that any of the places in that quiz do not exist? ',
+        # label='How much to you like trivia or pub quiz games like, for instance, Trivial Pursuit?',
+        # widget=widgets.RadioSelect
+    )
 
     labExperience = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['This is the First Time',
                  'Once',
                  'Twice',
@@ -1063,14 +1342,14 @@ class Player(BasePlayer):
     #### DEMOGRAPHICS ##################################################
 
     gender = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Male', 'Female', 'Other/ Prefer Not To Say'],
         label='What is your gender?',
         widget=widgets.RadioSelect)
 
     born = models.IntegerField(
-        blank=True,
-        label='In which year were you born?',
+        # blank=True,
+        label='In which year were you born? (YYYYY)',
         min=1920, max=2005)
 
     atEssex = models.StringField(
@@ -1082,9 +1361,9 @@ class Player(BasePlayer):
     # IF YES:
 
     positionAtEssex = models.StringField(
-        choices=['Undergraduate Student', 'Postgraduate Student (MA or PhD)',
-                 'Faculty', 'Administrative Staff', 'Other'],
         blank=True,
+        choices=['Undergraduate Student', 'Postgraduate Student (MA/MSc)', 'Postgraduate Student (PhD)',
+                 'Faculty', 'Administrative Staff', 'Other'],
         label='What best describes your position at the University of Essex?',
         widget=widgets.RadioSelect)
 
@@ -1123,74 +1402,65 @@ class Player(BasePlayer):
     #### TIPI (BIG5) ###################################################
 
     extraversion = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as extraverted, enthusiastic.',
-        widget=widgets.RadioSelect)
+        label='Extraverted, Enthusiastic.')
+
 
     agreeablenessR = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as critical, quarrelsome.',
-        widget=widgets.RadioSelect)
+        label='Critical, Quarrelsome.')
 
     conscientiousness = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as dependable, self-disciplined.',
-        widget=widgets.RadioSelect)
+        label='Dependable, Self-Disciplined.')
 
     neuroticism = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as anxious, easily upset.',
-        widget=widgets.RadioSelect)
+        label='Anxious, Easily upset.')
 
     openness = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as open to new experiences, complex.',
-        widget=widgets.RadioSelect)
+        label='Open to new experiences, Complex.')
 
     extraversionR = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as reserved, quiet.',
-        widget=widgets.RadioSelect)
+        label='Reserved, Quiet.')
 
     agreeableness = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as sympathetic, warm.',
-        widget=widgets.RadioSelect)
+        label='Sympathetic, Warm.')
 
     conscientiousnessR = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as disorganized, careless.',
-        widget=widgets.RadioSelect)
+        label='Disorganized, Careless.')
 
     neuroticismR = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as calm, emotionally stable.',
-        widget=widgets.RadioSelect)
+        label='Calm, Emotionally stable.')
 
     opennessR = models.StringField(
-        blank=True,
+        # blank=True,
         choices=['Disagree Strongly', 'Disagree Moderately', 'Disagree A Little',
                  'Neither Agree Nor Disagree', 'Agree A Little', 'Agree Moderately', 'Agree Strongly'],
-        label='I see myself as conventional, uncreative.',
-        widget=widgets.RadioSelect)
+        label='Conventional, Uncreative.')
 
 
     #### NEGATIVE SOCIAL IDENTITY ######################################
@@ -1205,16 +1475,45 @@ class Player(BasePlayer):
                  'Bachelor Degree',
                  'Master Degree',
                  'Doctoral Degree',
-                 'Prefer Not To Say'],
+                 'Do Not Know / Prefer Not To Say'],
         label='What is the highest educational qualification you have?',
-        widget=widgets.RadioSelect)
+        # widget=widgets.RadioSelect
+    )
 
 
     british = models.StringField(
-        blank=True,
-        choices=['United Kingdom', 'Europe (Non-UK)', 'Overseas'],
-        label='Are you from the UK, from Europe, or from overseas?',
-        widget=widgets.RadioSelect)
+        # blank=True,
+        choices=['United Kingdom',
+                 'Northern Europe (except UK)',
+                 'Western Europe',
+                 'Southern Europe',
+                 'Eastern Europe',
+                 'Caucasus',
+
+                 'North America',
+                 'Central America',
+                 'Carribean',
+                 'South America',
+
+                 'Central Asia',
+                 'Eastern Asia',
+                 'Southern Asia',
+                 'Southeastern Asia',
+
+                 'Northern Africa (except Egypt)',
+                 'Middle East',
+                 'Eastern Africa',
+                 'Middle Africa',
+                 'Southern Africa',
+
+                 'Australia / Oceania',
+                 'Do Not Know / Prefer Not To Say'
+                 ],
+        label='Where are you from? Please indicate the region where you grew up. If you grew up in different countries'
+              ' please choose the one when you spent most of your secondary school years.',
+        # widget=widgets.RadioSelect
+    )
+
 
     # IF NON-UK:
 
@@ -1242,7 +1541,8 @@ class Player(BasePlayer):
             [14, 'Do Not Know / Prefer Not To Say'],
         ],
         label='What is your income?',
-        widget=widgets.RadioSelect)
+        # widget=widgets.RadioSelect
+    )
 
     # -- Users will see a menu with '...', but their responses
     # will be recorded as 1, 2, or 3. (RDT -- Forms / Widgets)
@@ -1260,132 +1560,6 @@ class Player(BasePlayer):
     anythingElse = models.StringField(
         blank=True,
         label="If you have any other comments or if there is anything you would like to tell us please share it here.",
-    )
-
-
-    #### PRETEST FOR MEMORY BASELINE ########################################
-
-    memory_indianReservations = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='Where in the U.S. are the largest Indian Reservations?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_lakeInLibya = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],        label='What is the largest lake in Libya?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_mountainsNetherlands = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='How high is the highest mountain in the Netherlands?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_Greenland = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='Which of the following is NOT a neighbouring country of Greenland?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_UK = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='What is the capital city of the United Kingdom?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_France = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='What is the capital city of France?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_FrankfortUS = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='Frankfort is the capital of which U.S. state?',
-        widget=widgets.RadioSelect,
-    )
-
-    memory_LondonToEdinburgh = models.StringField(
-        blank=True,
-        choices=['Definitely saw this question',
-                 'Probably saw this question',
-                 'Probably did not see this question',
-                 'Definitely did not see this question',
-                 'Not sure'],
-        label='To get from London to Edinburgh you would travel [North/East/South/West]',
-        widget=widgets.RadioSelect,
-    )
-
-    rememberedSeconds = models.StringField(
-        blank=True,
-        label='And do you remember how much time you had to answer the questions?',
-    )
-
-    readOtherQs = models.StringField(
-        blank=True,
-        choices=['I read them all carefully', 'I read most carefully', 'I skimmed them all', 'I skimmed most',
-                 'I skimmed a few', 'I did not read any of them'],
-        label='Thinking about the other teams questions: Did you read them carefully, did you skim read them '
-              'or did you not read them at all? ',
-        widget=widgets.RadioSelect,
-    )
-
-    felt = models.StringField(
-        blank=True,
-        label='How did this quiz make you feel?',
-    )
-
-    howFair = models.StringField(
-        blank=True,
-        choices=['Very unfair', 'Unfair', 'Fair', 'Very fair'],
-        label='How fair or unfair was this quiz?',
-        widget=widgets.RadioSelect,
-     )
-
-    noticedUnfair = models.StringField(
-        blank=True,
-        choices=['During the first round (questions 1-4)',
-                 'During the second round (5-8)',
-                 'During the third round (9-12)',
-                 'I did not notice'],
-        label='How quickly did you notice that one team got easier questions than the other team?',
-        widget=widgets.RadioSelect,
     )
 
 

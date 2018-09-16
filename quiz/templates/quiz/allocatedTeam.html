@@ -12,17 +12,26 @@
     <link rel="stylesheet" type="text/css"/>
 
     <p>
-
         You were randomly assigned to <strong>Team {{ player.treatment }}</strong>.
+
     </p>
     <p>
 
-        To help you get the hang of this experiment we will start with one practice question before we move on
-        to the actual (paid) quiz.
+        {% if treatment == 'A' %}
+
+        There are {{ n_team_a_consented }} people on your team (Team A) and {{ n_team_b_consented }} people
+        on the team you are playing against (Team B).
+
+        {% else %}
+
+        There are {{ n_team_b_consented }} people on your team (Team B) and {{ n_team_a_consented }} people
+        on the team you are playing against (Team A).
+
+        {% endif %}
+
     </p>
     <p>
-        Please click ‘Next’ when you are ready to start.
-
+        Please click ‘Next’ when you are ready to start the quiz.
     </p>
 </div>
 

@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-    Your Views on Feedback 2
+    Your Views on Feedback 1
 {% endblock %}
 
 {% block content %}
@@ -15,29 +15,18 @@
 <div class="instructions well well-lg">
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
-    <body style="background-color:#e7f0f1;">
-
-        {% if falsefeedback == 'unfair' %}
-
-            {% formfield player.false_fact_too_easy %}
-            {% formfield player.false_fact_too_hard %}
-            {% formfield player.false_fact_too_hard2 %}
-            {% formfield player.false_fact_30sec_unfair %}
-
-        {% else %}
+    <body style="background-color:#faf0e6;">
 
             {% formfield player.true_fact_too_easy %}
             {% formfield player.true_fact_too_hard %}
             {% formfield player.true_fact_too_hard2 %}
             {% formfield player.true_fact_30sec %}
 
-        {% endif %}
-
 </div>
 </body>
 
-For your reference, this was feedback 2:
+For your reference, this was feedback 1:
 
-{% include Constants.unfair_template %}
+{% include Constants.fairplay_template %}
 
 {% endblock %}

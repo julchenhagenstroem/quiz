@@ -13,31 +13,35 @@
 
 
     <p>
-        How much you make on this quiz depends on your own performance, but also on your group’s performance.
+        <strong>How much you make on this quiz depends on your own performance, and on your group’s performance.</strong>
     </p>
-
     <p>
-        Your payoffs from the quiz are calculated as follows:
-        Each correct answer is worth {{ Constants.stakes }}. Everybody on your team will keep half of what they earn
+        Your payoff is calculated as follows:
+    </p>
+    <p> <strong>Each correct answer is worth {{ Constants.stakes }}. Everybody on your team will keep half of what they earn
         for themselves. The other half will be put into a pot and will be evenly divided between all
-        team members. In mathematical terms:
+        team members.</strong>
     </p>
     <p>
-        Your payoff = (0.5 * number of questions <strong>you</strong> answered correctly) +
-        (0.5 * total number of questions <strong> your team</strong> answered correctly / number of people on your team).
+        In mathematical terms:
     </p>
-
     <p>
-        Note, though, that we have a {{ Constants.minimum_payoff }} minimum payment policy at ESSEXLab.
-        You will be paid {{ Constants.minimum_payoff }} even if your payoff as determined by this quiz is below
-        this minimum payment.
+        Your payoff = (0.5 * the number of questions <strong>you</strong> answer correctly) +
+        (0.5 * the total number of questions <strong> your team</strong> answers correctly /
+        the number of people on your team).
 
     </p>
 
     <p>
-        That means that you can make between {{ Constants.minimum_payoff }}
-        (if neither you nor anybody else on your team answers any questions correctly) and
-        {{ Constants.maximum_payoff }} (if everybody on your team answers all questions correctly).
+        Note, though, that we have a {{ Constants.minimum_payoff }} minimum payment policy at ESSEXLab:
+        If your payoff as determined by this quiy is less than {{ Constants.minimum_payoff }}
+        you will be paid {{ Constants.minimum_payoff }}.
+
+    </p>
+
+    <p>
+        <strong>That means that you can make between {{ Constants.minimum_payoff }} and
+        {{ Constants.maximum_payoff }}</strong>  (if everybody on your team answers all questions correctly).
     </p>
 
 </div>

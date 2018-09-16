@@ -1,0 +1,45 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Fair or Unfair?
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+    <body style="background-color:#e7f0f1;">
+
+    <p>
+        The two people's feedback we showed you differed in how fair they thought this quiz was.
+    </p>
+    <p>
+        Thinking about the person whose feedback you just evaluated: How fair or unfair do you think
+        THIS PERSON thought the quiz was?
+    </p>
+    <p>
+        We would like you to place this person's thoughts about the quiz on a scale from 'definitely unfair'
+        (0) to 'definitely fair' (100). Note that this is not a true-false question: we are just interested in how
+        this feedback came across to you.
+    </p>
+
+
+    <p>
+    <strong>0 = This person thought the quiz was definitely unfair.</strong> |
+    <strong>100 = This person thought the quiz was definitely fair.</strong>
+    </p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+</div>
+</body>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

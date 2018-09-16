@@ -1,0 +1,48 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Luck of the Draw
+{% endblock %}
+
+{% block content %}
+
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Now sometimes it happens in a pub quiz that one team has the luck of the draw, and others do not.
+        Thinking about this quiz:
+    </p>
+    <p>
+        <strong>How likely do you think it is that Team A had the luck of the draw?</strong>
+    </p>
+    <p>
+        In other words:
+    </p>
+    <p>
+        <strong>How likely do think it is that this game was unbalanced and Team A was favoured?</strong>
+    </p>
+    <p>
+        Please use the following scale from 0 ('Definitely by chance: Team A had luck of the draw') to 100
+        ('Definitely unbalanced: No way this happened by chance; Team A was favoured') to indicate your answer.
+    </p>
+
+    <p>
+        <strong>0 = Definitely by chance.</strong> |
+        <strong>100 = No way this happened by chance.</strong> <br>
+    </p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

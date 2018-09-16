@@ -1,0 +1,38 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Fair or Unfair?
+{% endblock %}
+
+{% block content %}
+
+<div class="instructions well well-lg">
+    <h2 class="panel-sub-heading"></h2>
+    <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Now we would like to know how fair or unfair YOU thought the quiz was.
+    </p>
+    <p>
+        Here is the same scale you saw earlier: 0 means 'definitely unfair', 100 means 'definitely fair'.
+        Again, this is not a true-false question: we are interested in how fair or unfair the quiz felt to you.
+    </p>
+
+    <p>
+    <strong>0 = This quiz was definitely unfair.</strong> <br>
+    <strong>50 = This quiz was neither fair nor unfair.</strong> <br>
+    <strong>100 = This quiz was definitely fair.</strong>
+    </p>
+
+    {% for field in form %}
+        {% formfield field %}
+    {% endfor %}
+
+    </div>
+
+<span align="right">
+{% next_button %}
+</span>
+
+{% endblock %}

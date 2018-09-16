@@ -15,17 +15,15 @@
 <p>
     Here is a scale from 0 (very low) to 100 (very high). Thinking again about the person who wrote this feedback:
     How would you rate this person on the following:
-
-    <p>
-    <strong>0 = very low</strong> |
-    <strong>100 = very high</strong>
-    </p>
-
+</p>
+<p>
+    <strong>0 = Very Low.</strong> |
+    <strong>100 = Very High.</strong>
 </p>
 
-    {% formfield player.educationRating_p1 label=" <strong>Education</strong>: This person is well educated."%}
-    {% formfield player.accuracyRating_p1 label="<strong>Accuracy</strong>: The points this person makes are factually accurate."%}
-    {% formfield player.representationRating_p1 label="<strong>Representation</strong>: This person represents the interests of my team."%}
+    {% formfield player.educationRating_unfair label=" <strong>Education</strong>: This person is well educated." %}
+    {% formfield player.accuracyRating_unfair label="<strong>Accuracy</strong>: The points this person makes are factually accurate." %}
+    {% formfield player.representationRating_unfair label="<strong>Representation</strong>: This person is a good representative of my team." %}
 
 </div>
 </body>

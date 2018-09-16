@@ -12,6 +12,21 @@ class welcome(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+    # rdm = random.random()
+    #
+    # def falseFeedback
+    #     if rdm <= .5:
+    #         return "fair"
+    #     else:
+    #         return "unfair"
+
+    def vars_for_template(self):
+
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+        }
 
 class consent(Page):
 
@@ -22,12 +37,6 @@ class consent(Page):
         self.player.participant.vars['consented'] = True
         self.player.consented = True
 
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-        }
 
 ##### INTRO #################################################################
 
@@ -44,6 +53,16 @@ class intro3(Page):
         return self.round_number == 1
 
 
+class WaitToStart(WaitPage): # EITHER DEFINE GROUP SIZES HERE OR IN introPaidQuiz
+
+    def is_displayed(self):
+        return self.round_number == 1
+
+    def after_all_players_arrive(self):
+        self.group.set_team_sizes() # THIS WORKS (can access it in later pages) (NB: Kind of already defined this above)
+
+    body_text = "Waiting for people to finish reading the instructions."
+
 ##### TEAM ##################################################################
 
 class allocatedTeam(Page):
@@ -51,62 +70,15 @@ class allocatedTeam(Page):
     def is_displayed(self):
         return self.round_number == 1
 
-
-
-
-##### PRACTICE ROUND ########################################################
-
-class practice_question(Page):
-    form_model = 'player'
-    form_fields = ['submitted_answer']
-    timeout_seconds = 30
-
-    def is_displayed(self):
-        return self.round_number == 1
-
-    def submitted_answer_choices(self):
-        q = self.player.practice_question()
-        return [
-            q['choice1'],
-            q['choice2'],
-            q['choice3'],
-            q['choice4'],
-        ]
+    # def before_next_page(self):
+    #     self.group.set_team_sizes() # THIS WORKS -- BUT CAN GIVE ONE TEAM = 0 if not yet done reading instructions!!
 
     def vars_for_template(self):
         return {
+            'n_team_a_consented': self.session.vars['n_team_a_consented'],
+            'n_team_b_consented': self.session.vars['n_team_b_consented'],
             'treatment': self.participant.vars['treatment'],
         }
-
-
-class other_practice_question(Page):
-    form_model = 'player'
-
-    def is_displayed(self):
-        return self.round_number == 1
-
-    def vars_for_template(self):
-        q = self.player.other_practice_question()
-        return {
-            'choice1': q['choice1'],
-            'choice2': q['choice2'],
-            'choice3': q['choice3'],
-            'choice4': q['choice4'],
-            'treatment': self.participant.vars['treatment'],
-        }
-
-
-##### GREAT INTRODUCTIONS ###################################################
-
-class introPaidQuiz(Page): # EITHER DEFINE GROUP SIZES HERE OR IN WaitToStart
-    def is_displayed(self):
-        return self.round_number == 1
-
-    def before_next_page(self):
-        self.group.set_team_sizes() # THIS WORKS HERE JUST AS WELL AS DOWN IN THE NEXT WAITPAGE (can access it in later pages)
-
-
-
 
 ##### WAIT FOR ALL PARTICIPANTS TO ARRIVE ###################################
 
@@ -218,9 +190,10 @@ class WaitAfterEachRound(WaitPage): # Not waiting for all!!
 
     body_text = "Waiting for your team mates to finish."
 
+
     # def after_all_players_arrive(self):
     #
-    #     self.player.set_own_correct_answers_this_round() # NOOOOO WORK (DOMINIK?)
+    #     self.player.set_own_correct_answers_this_round() # NOOOOO WORK -- Doesnt work here or on the page below (DOMINIK?)
     #     self.group.set_teams_correct_answers_this_round() # Needs is_correct_this_round
     #     self.group.set_teams_avg_correct_this_round() # Needs is_correct_this_round
 
@@ -280,7 +253,7 @@ class WaitAfterEachRound(WaitPage): # Not waiting for all!!
 # same participant in previous rounds of the same app. The difference is that in_all_rounds() includes the current
 # round's player. (RTD -- Apps & Rounds)
 
-class ownResultsThisRound(Page): # HIER WEITER
+class ownResultsThisRound(Page):
 
     def is_displayed(self):
         return self.round_number % 4 == 0  # % = modulo, e.g. 3 Runden mit 4 Fragen: 4, 8, 12 ist teilbar durch 3 (Rest == 0)
@@ -305,22 +278,17 @@ class ownResultsThisRound(Page): # HIER WEITER
         }
 
     def before_next_page(self):
-        self.group.set_teams_correct_answers_this_round() # THIS WORKS (PUSHED UP)
+        self.group.set_teams_correct_answers_this_round()
         self.group.set_teams_avg_correct_this_round()
 
 
-# Just trying it this would work here (didn't work in WaitPage) -- NOPE
-#     def before_next_page(self): # THIS SHOULD WORK FOR NORMAL PAGES -- SEE IF IT WORKS FOR WAITPAGES, AS WELL? -- NOPE
+#     def before_next_page(self): # -- NOPE
 #             self.player.set_own_correct_answers_this_round()
-#
-# AttributeError -- 'Player' object has no attribute 'player'
 
-# CALCULATE OTHER TEAM'S RESULTS HERE?
+#  This works neither under player nor under groups: AttributeError: 'Player' object has no attribute 'player'
+#  Ideally, I would calculate set_own_correct_answers_this_round on the waitpage above
 
-# Just trying if this would work here (didn't work in WaitPage) -- NOPE
-#     def before_next_page(self):
-#         self.player.set_teams_correct_answers_this_round()
-#  works neither under player nor under groups: AttributeError: 'Player' object has no attribute 'player'
+
 
 
 
@@ -369,16 +337,17 @@ class CheckRound1(Page):
             'falsefeedback': self.participant.vars['falsefeedback'],
             'firstfeedback': self.participant.vars['firstfeedback'],
 
-            'n_team_a': self.session.vars['n_team_a'], # THIS WORKS
+            'n_team_a': self.session.vars['n_team_a'],
             'n_team_b': self.session.vars['n_team_b'],
 
-            'n_team_a_consented': self.session.vars['n_team_a_consented'], # THIS WORKS
+            'n_team_a_consented': self.session.vars['n_team_a_consented'],
             'n_team_b_consented': self.session.vars['n_team_b_consented'],
 
             'is_correct_this_round': self.participant.vars['is_correct_this_round'],
             'earned_this_round': self.participant.vars['earned_this_round'],
 
             'all_correct_this_round': all_correct_this_round,
+
             'a_correct_this_round': a_correct_this_round,
             'b_correct_this_round': b_correct_this_round,
 
@@ -406,10 +375,10 @@ class CheckRound2(Page):
             'falsefeedback': self.participant.vars['falsefeedback'],
             'firstfeedback': self.participant.vars['firstfeedback'],
 
-            'n_team_a': self.session.vars['n_team_a'],  # THIS WORKS
+            'n_team_a': self.session.vars['n_team_a'],
             'n_team_b': self.session.vars['n_team_b'],
 
-            'n_team_a_consented': self.session.vars['n_team_a_consented'],  # THIS WORKS
+            'n_team_a_consented': self.session.vars['n_team_a_consented'],
             'n_team_b_consented': self.session.vars['n_team_b_consented'],
 
             'is_correct_this_round': self.participant.vars['is_correct_this_round'],
@@ -428,7 +397,7 @@ class CheckRound2(Page):
 
 
 
-##### OTHER TEAM'S ANSWERS THIS ROUND ####################################### THIS WORKS
+##### OTHER TEAM'S ANSWERS THIS ROUND #######################################
 
 class otherTeamsQsThisRound(Page):
 
@@ -441,7 +410,7 @@ class otherTeamsQsThisRound(Page):
 
         player_in_last_4_qs = self.player.in_all_rounds()[-4: ]
 
-        # THIS GIVES WRONG ANSWERS!!!
+        # THIS GIVES WRONG ANSWERS!!
         # team_a_is_correct_this_round = sum([p.is_correct for p in self.player.in_all_rounds()[-4:] if p.treatment == 'A']) # WORKS BUT POSSIBLY WRONG NUMBERS
         # team_b_is_correct_this_round = sum([p.is_correct for p in self.player.in_all_rounds()[-4:] if p.treatment == 'B'])
         #
@@ -468,7 +437,7 @@ class otherTeamsQsThisRound(Page):
 
 
 
-##### OTHER TEAM'S RESULTS THIS ROUND ####################################### THIS WORKS HIER WEITER
+##### OTHER TEAM'S RESULTS THIS ROUND #######################################
 
 class teamsResultsThisRound(Page):
 
@@ -505,7 +474,13 @@ class endQuiz(Page):
             p.is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds()]) # THIS WORKS
             p.participant.vars['is_correct_total'] = p.is_correct_total
 
-        # THIS GIVES WRONG ANSWERS!!!
+            p.earned_total = c(Constants.stakes * sum([p.is_correct for p in self.player.in_all_rounds()]))  # NEW
+            p.participant.vars['earned_total'] = p.earned_total
+
+            p.half_own_earnings = c(Constants.stakes * sum([p.is_correct for p in self.player.in_all_rounds()]) / 2 )  # NEW
+            p.participant.vars['half_own_earnings'] = p.half_own_earnings
+
+        # THIS GIVES WRONG ANSWERS!!
         # # team_a_is_correct_total = sum([p.is_correct_total for p in self.subsession.get_players() if p.treatment == 'A']) #TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
         # # team_b_is_correct_total = sum([p.is_correct_total for p in self.subsession.get_players() if p.treatment == 'B'])
         #
@@ -522,7 +497,7 @@ class endQuiz(Page):
         # self.participant.vars['team_a_earned_total'] = team_a_earned_total
         # self.participant.vars['team_b_earned_total'] = team_b_earned_total
 
-        return { # JUST TO CHECK...
+        return {
             'is_correct_total': self.participant.vars['is_correct_total'],
         }
 
@@ -540,10 +515,11 @@ class CalculatePayoffs(WaitPage):
     def after_all_players_arrive(self): # THIS WORKS
         self.group.set_teams_is_correct_total()
         self.group.set_teams_earned_total()
+        self.group.set_teams_avg_payoff() # NEW
         self.group.set_teams_avg_is_correct()
         self.group.set_add_ons()
         self.group.set_jackpot()
-        # self.player.set_payoffs() # TRY THIS NEXT
+        # self.player.set_payoffs() # THIS WONT WORK -- DO THIS ON NEXT PAGE
 
 
 ##### CHECK PAGE (FOR DEBUGGING) #############################################
@@ -577,67 +553,68 @@ class CheckRound3(Page):
 
 
 
-
-##### OWN RESULTS ALL ROUNDS ################################################
-
-class ownResultsAllRounds(Page):
-
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds
-
-    def vars_for_template(self):
-
-        player_in_all_rounds = self.player.in_all_rounds()
-        #
-        # for p in self.player.in_all_rounds():
-        #     p.is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds()]) # DID THIS IN endQuiz
-        #     p.participant.vars['is_correct_total'] = p.is_correct_total
-
-        earned_total = c(Constants.stakes * self.participant.vars['is_correct_total'])
-        self.participant.vars['earned_total'] = earned_total
-
-        for p in self.player.in_all_rounds(): # THIS WORKS # is_correct_all_rounds SAME AS is_correct_total
-
-            p.is_correct_all_rounds = sum([p.is_correct for p in self.player.in_all_rounds()]) # THIS WORKS
-            p.participant.vars['is_correct_all_rounds'] = p.is_correct_all_rounds
-
-        team_a_players = [p for p in self.subsession.get_players() if p.treatment == 'A']
-        team_b_players = [p for p in self.subsession.get_players() if p.treatment == 'B']
-
-        team_a_is_correct_total = sum(p.is_correct_total for p in team_a_players) # Rename is_correct_total is_correct_all_rounds
-        team_b_is_correct_total = sum(p.is_correct_total for p in team_b_players) # Rename is_correct_total is_correct_all_rounds
-
-        self.session.vars['team_a_is_correct_total'] = team_a_is_correct_total
-        self.session.vars['team_b_is_correct_total'] = team_b_is_correct_total
-
-        team_a_earned_total = c(Constants.stakes * sum(p.is_correct_total for p in team_a_players)) # THIS WORKS
-        team_b_earned_total = c(Constants.stakes * sum(p.is_correct_total for p in team_b_players))
-
-        self.session.vars['team_a_earned_total'] = team_a_earned_total # Need to define this as a session.vars
-        self.session.vars['team_b_earned_total'] = team_b_earned_total
-
-
-        return {
-                'is_correct_total': self.participant.vars['is_correct_total'],
-                'earned_total': self.participant.vars['earned_total'],
-                'is_correct_all_rounds': self.participant.vars['is_correct_all_rounds'],
-                'team_a_is_correct_total': self.session.vars['team_a_is_correct_total'],
-                'team_b_is_correct_total': self.session.vars['team_b_is_correct_total'],
-                'team_a_earned_total': self.session.vars['team_a_earned_total'],
-                'team_b_earned_total': self.session.vars['team_b_earned_total'],
-                # 'earned_total': Constants.stakes * sum([p.is_correct for p in player_in_all_rounds]),
-        }
-
-    def before_next_page(self):
-        self.group.set_add_ons() # THIS WORKS
-        self.group.set_teams_avg_is_correct() # TRY THIS NEXT
-        # (then i wouldn't need to calculate team_a_avg_is_correct in teamsResultsAllRounds)
-
-        # NB needs team_a_earned_total.
-        # NB Need to define self.session.vars['team_a_earned_total'] somewhere up there.
-
-        # team_a_is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds() if p.treatment == 'A']), # THIS GIVES THE CORRECT NUMBERS BUT AS A LIST
-        # team_b_is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds() if p.treatment == 'B']), # THIS GIVES THE CORRECT NUMBERS BUT AS A LIST
+#
+# ##### OWN RESULTS ALL ROUNDS ################################################ DROP THIS AND CALCULATE STUFF ABOVE
+#
+# class ownResultsAllRounds(Page):
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds
+#
+#     def vars_for_template(self):
+#
+#         player_in_all_rounds = self.player.in_all_rounds()
+#         #
+#         # for p in self.player.in_all_rounds():
+#         #     p.is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds()]) # DID THIS IN endQuiz
+#         #     p.participant.vars['is_correct_total'] = p.is_correct_total
+#
+#         # earned_total = c(Constants.stakes * self.participant.vars['is_correct_total']) # MOVED THIS UP
+#         # self.participant.vars['earned_total'] = earned_total
+#
+#         for p in self.player.in_all_rounds(): # THIS WORKS # is_correct_all_rounds SAME AS is_correct_total
+#
+#             p.is_correct_all_rounds = sum([p.is_correct for p in self.player.in_all_rounds()]) # THIS WORKS bUT NO NEED SAME AS is_correct_total
+#             p.participant.vars['is_correct_all_rounds'] = p.is_correct_all_rounds
+#
+#
+#         team_a_players = [p for p in self.subsession.get_players() if p.treatment == 'A']
+#         team_b_players = [p for p in self.subsession.get_players() if p.treatment == 'B']
+#
+#         team_a_is_correct_total = sum(p.is_correct_total for p in team_a_players) # Rename is_correct_total is_correct_all_rounds
+#         team_b_is_correct_total = sum(p.is_correct_total for p in team_b_players) # Rename is_correct_total is_correct_all_rounds
+#
+#         self.session.vars['team_a_is_correct_total'] = team_a_is_correct_total
+#         self.session.vars['team_b_is_correct_total'] = team_b_is_correct_total
+#
+#         team_a_earned_total = c(Constants.stakes * sum(p.is_correct_total for p in team_a_players)) # THIS WORKS
+#         team_b_earned_total = c(Constants.stakes * sum(p.is_correct_total for p in team_b_players))
+#
+#         self.session.vars['team_a_earned_total'] = team_a_earned_total # Need to define this as a session.vars
+#         self.session.vars['team_b_earned_total'] = team_b_earned_total
+#
+#
+#         return {
+#                 'is_correct_total': self.participant.vars['is_correct_total'],
+#                 'earned_total': self.participant.vars['earned_total'],
+#                 'is_correct_all_rounds': self.participant.vars['is_correct_all_rounds'],
+#                 'team_a_is_correct_total': self.session.vars['team_a_is_correct_total'],
+#                 'team_b_is_correct_total': self.session.vars['team_b_is_correct_total'],
+#                 'team_a_earned_total': self.session.vars['team_a_earned_total'],
+#                 'team_b_earned_total': self.session.vars['team_b_earned_total'],
+#                 # 'earned_total': Constants.stakes * sum([p.is_correct for p in player_in_all_rounds]),
+#         }
+#
+#     def before_next_page(self):
+#         self.group.set_add_ons() # THIS WORKS
+#         self.group.set_teams_avg_is_correct() # TRY THIS NEXT
+#         # (then i wouldn't need to calculate team_a_avg_is_correct in teamsResultsAllRounds)
+#
+#         # NB needs team_a_earned_total.
+#         # NB Need to define self.session.vars['team_a_earned_total'] somewhere up there.
+#
+#         # team_a_is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds() if p.treatment == 'A']), # THIS GIVES THE CORRECT NUMBERS BUT AS A LIST
+#         # team_b_is_correct_total = sum([p.is_correct for p in self.player.in_all_rounds() if p.treatment == 'B']), # THIS GIVES THE CORRECT NUMBERS BUT AS A LIST
 
 
 # ##### CHECK PAGE (FOR DEBUGGING) #############################################
@@ -665,6 +642,7 @@ class ownResultsAllRounds(Page):
 #         }
 # ##### CHECK PAGE #############################################################
 
+
 class payoffs(Page):
 
     def is_displayed(self):
@@ -672,48 +650,107 @@ class payoffs(Page):
 
     def vars_for_template(self):
 
-        team_a_avg_is_correct = int(100 * self.session.vars['team_a_is_correct_total'] / self.session.vars['n_team_a_consented'] / Constants.num_rounds)
-        team_b_avg_is_correct = int(100 * self.session.vars['team_b_is_correct_total'] / self.session.vars['n_team_b_consented'] / Constants.num_rounds)
+        # PROBLEM EXPERIMENTS 6.6.2018: TEAM A PARTICIPANTS GOT HALF OF THEIR earned_total PLUS team_b_add_on, not team a!
 
+        # team_a_players = [p for p in self.subsession.get_players() if p.treatment == 'A']
+        # team_b_players = [p for p in self.subsession.get_players() if p.treatment == 'B']
+        #
+        # for p in team_a_players:
+        #     # p.payoff = 0.5 * p.earned_total + self.session.vars['team_a_add_on']
+        #     p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_a_add_on']
+        #
+        # for p in team_b_players:
+        #     # p.payoff = 0.5 * p.earned_total + self.session.vars['team_b_add_on']
+        #     p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_b_add_on']
+        #
+        #     p.participant.vars['payoff'] = p.payoff # SELF??
+        #
 
-        team_a_avg_payoff = self.session.vars['team_a_earned_total'] / self.session.vars['n_team_a_consented'] # try set_teams_avg_payoff()
-        team_b_avg_payoff = self.session.vars['team_b_earned_total'] / self.session.vars['n_team_b_consented']
+        # If that doesnt  work try ... for p in self.player.in_all_rounds():
 
-        self.session.vars['team_a_avg_payoff'] = team_a_avg_payoff
-        self.session.vars['team_b_avg_payoff'] = team_b_avg_payoff
+        for p in self.subsession.get_players():
 
-        team_a_players = [p for p in self.subsession.get_players() if p.treatment == 'A']
-        team_b_players = [p for p in self.subsession.get_players() if p.treatment == 'B']
+            if self.participant.vars['treatment'] == 'A':
+                # p.payoff_unrounded = self.participant.vars['earned_total'] / 2 + self.session.vars['team_a_add_on'] # THIS WORKS!!
+                self.participant.payoff = self.participant.vars['earned_total'] / 2 + self.session.vars['team_a_add_on']
 
-        for p in team_a_players:
-            # p.payoff = 0.5 * p.earned_total + self.session.vars['team_a_add_on']
-            p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_a_add_on']
-
-        for p in team_b_players:
-            # p.payoff = 0.5 * p.earned_total + self.session.vars['team_b_add_on']
-            p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_b_add_on']
-
-            self.participant.vars['payoff'] = p.payoff
-
-        for p in self.subsession.get_players(): # ??
-
-            if self.participant.vars['payoff'] < Constants.minimum_payoff:
-                p.paid = Constants.minimum_payoff
             else:
-                p.paid = p.payoff
+                # p.payoff_unrounded = self.participant.vars['earned_total']  / 2 + self.session.vars['team_b_add_on']
+                self.participant.payoff = self.participant.vars['earned_total']  / 2 + self.session.vars['team_b_add_on']
 
-            self.participant.vars['paid'] = p.paid
+            # self.participant.vars['payoff_unrounded'] = p.payoff_unrounded
+
+            p.n_team_a_consented = self.session.vars['n_team_a_consented']
+            p.n_team_b_consented = self.session.vars['n_team_b_consented']
+
+            p.team_a_is_correct_this_round = self.session.vars['team_a_is_correct_this_round']
+            p.team_b_is_correct_this_round = self.session.vars['team_b_is_correct_this_round']
+
+            p.team_a_avg_correct_this_round = self.session.vars['team_a_avg_correct_this_round']
+            p.team_b_avg_correct_this_round = self.session.vars['team_b_avg_correct_this_round']
+
+            p.team_a_is_correct_total = self.session.vars['team_a_is_correct_total']
+            p.team_b_is_correct_total = self.session.vars['team_b_is_correct_total']
+
+            p.team_a_earned_total = self.session.vars['team_a_earned_total']
+            p.team_b_earned_total = self.session.vars['team_b_earned_total'] # changed from team_a_earned_total
+
+            p.team_a_avg_payoff = self.session.vars['team_a_avg_payoff']
+            p.team_b_avg_payoff = self.session.vars['team_b_avg_payoff']
+
+            p.team_a_avg_is_correct = self.session.vars['team_a_avg_is_correct']
+            p.team_b_avg_is_correct = self.session.vars['team_b_avg_is_correct']
+
+            p.team_a_add_on = self.session.vars['team_a_add_on']
+            p.team_b_add_on = self.session.vars['team_b_add_on']
+
+            p.team_a_pot = self.session.vars['team_a_pot']
+            p.team_b_pot = self.session.vars['team_b_pot']
+
+
+            # if self.participant.vars['treatment'] == 'A':
+            #     p.payoff = self.participant.vars['earned_total'] / 2 + self.session.vars['team_a_add_on'] # THIS WORKS!!
+            #
+            # else:
+            #     p.payoff = self.participant.vars['earned_total']  / 2 + self.session.vars['team_b_add_on']
+            #
+            # self.participant.vars['payoff'] = p.payoff
+            # # self.participant.vars['payoff'] = p.payoff
+            #
+            #
+
+            # p.half_own_earnings: self.participant.vars['earned_total'] / 2 # Did this in endQuiz
+            # p.participant.vars['paid'] = p.paid
+
+# CUTS
+
+        # for p in self.player.in_all_rounds(): # STOLEN FROM ownResultsAllRounds  -- THIS WORKS # is_correct_all_rounds SAME AS is_correct_total
+        #
+        #     p.is_correct_all_rounds = sum([p.is_correct for p in self.player.in_all_rounds()]) # THIS WORKS
+        #     p.participant.vars['is_correct_all_rounds'] = p.is_correct_all_rounds
+        #
+        #     p.earned_total = c(Constants.stakes * self.participant.vars['is_correct_total'])
+        #     self.participant.vars['earned_total'] = earned_total # SELF OR P??
+
+        # earned_total = c(Constants.stakes * self.participant.vars['is_correct_total'])
+        # self.participant.vars['earned_total'] = earned_total # SELF OR P??
+
+        # team_a_avg_is_correct = int(100 * self.session.vars['team_a_is_correct_total'] / self.session.vars['n_team_a_consented'] / Constants.num_rounds) # did this in models.py
+        # team_b_avg_is_correct = int(100 * self.session.vars['team_b_is_correct_total'] / self.session.vars['n_team_b_consented'] / Constants.num_rounds)
+        #
+        # team_a_avg_payoff = self.session.vars['team_a_earned_total'] / self.session.vars['n_team_a_consented'] # try set_teams_avg_payoff()
+        # team_b_avg_payoff = self.session.vars['team_b_earned_total'] / self.session.vars['n_team_b_consented']
+        #
+        # self.session.vars['team_a_avg_payoff'] = team_a_avg_payoff
+        # self.session.vars['team_b_avg_payoff'] = team_b_avg_payoff
+
 
         return {
-
             'n_team_a_consented': self.session.vars['n_team_a_consented'],
             'n_team_b_consented': self.session.vars['n_team_b_consented'],
 
             'team_a_avg_is_correct': self.session.vars['team_a_avg_is_correct'],
             'team_b_avg_is_correct': self.session.vars['team_b_avg_is_correct'],
-
-            # 'team_a_avg_is_correct': team_a_avg_is_correct,  # self.session.vars['team_a_avg_is_correct'], HIER WEITER
-            # 'team_b_avg_is_correct': team_b_avg_is_correct,  # self.session.vars['team_b_avg_is_correct'],
 
             'team_a_avg_payoff': self.session.vars['team_a_avg_payoff'],
             'team_b_avg_payoff': self.session.vars['team_b_avg_payoff'],
@@ -727,7 +764,7 @@ class payoffs(Page):
             'team_a_pot': (self.session.vars['team_a_earned_total'] / 2),
             'team_b_pot': (self.session.vars['team_b_earned_total'] / 2),
 
-            'team_a_add_on': self.session.vars['team_a_add_on'], # THIS SHOULD BE THE ONLY NEW THING!!!
+            'team_a_add_on': self.session.vars['team_a_add_on'],
             'team_b_add_on': self.session.vars['team_b_add_on'],
 
             'treatment': self.participant.vars['treatment'],
@@ -736,74 +773,16 @@ class payoffs(Page):
             'earned_total': self.participant.vars['earned_total'],
             'half_own_earnings': (self.participant.vars['earned_total'] / 2),
 
-            'payoff': self.participant.vars['payoff'],
+            # 'payoff_unrounded': self.participant.vars['payoff_unrounded'],
+            'payoff': self.participant.payoff,
 
-            'paid': self.participant.vars['paid'],
-
+            # 'paid': self.participant.vars['paid'],
 
         }
 
+    # def before_next_page(self): # NEU -- adapted von Dominik
+    #     self.player.set_group_vars_for_player()
 
-##### PAYOFFS ################################################################
-
-class payoffsDetailed(Page):
-
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds
-
-    def vars_for_template(self):
-
-        team_a_players = [p for p in self.subsession.get_players() if p.treatment == 'A']
-        team_b_players = [p for p in self.subsession.get_players() if p.treatment == 'B']
-
-        for p in team_a_players:
-            # p.payoff = 0.5 * p.earned_total + self.session.vars['team_a_add_on']
-            p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_a_add_on']
-
-        for p in team_b_players:
-            # p.payoff = 0.5 * p.earned_total + self.session.vars['team_b_add_on']
-            p.payoff = 0.5 * self.participant.vars['earned_total'] + self.session.vars['team_b_add_on']
-
-            self.participant.vars['payoff'] = p.payoff
-
-        team_a_avg_payoff = self.session.vars['team_a_earned_total'] / self.session.vars['n_team_a_consented']
-        team_b_avg_payoff = self.session.vars['team_b_earned_total'] / self.session.vars['n_team_b_consented']
-
-        self.session.vars['team_a_avg_payoff'] = team_a_avg_payoff
-        self.session.vars['team_b_avg_payoff'] = team_b_avg_payoff
-
-
-        return {
-
-            'n_team_a_consented': self.session.vars['n_team_a_consented'],
-            'n_team_b_consented': self.session.vars['n_team_b_consented'],
-
-            'team_a_avg_is_correct': self.session.vars['team_a_avg_is_correct'],
-            'team_b_avg_is_correct': self.session.vars['team_b_avg_is_correct'],
-
-            'team_a_is_correct_total': self.session.vars['team_a_is_correct_total'],
-            'team_b_is_correct_total': self.session.vars['team_b_is_correct_total'],
-
-            'team_a_earned_total': self.session.vars['team_a_earned_total'],
-            'team_b_earned_total': self.session.vars['team_b_earned_total'],
-
-            'team_a_pot': (self.session.vars['team_a_earned_total'] / 2),
-            'team_b_pot': (self.session.vars['team_b_earned_total'] / 2),
-
-            'team_a_add_on': self.session.vars['team_a_add_on'], # THIS SHOULD BE THE ONLY NEW THING!!!
-            'team_b_add_on': self.session.vars['team_b_add_on'],
-
-            'treatment': self.participant.vars['treatment'],
-
-            'is_correct_total': self.participant.vars['is_correct_total'],
-            'earned_total': self.participant.vars['earned_total'],
-            'half_own_earnings': (self.participant.vars['earned_total'] / 2),
-
-            'payoff': self.participant.vars['payoff'],
-
-            'team_a_avg_payoff': self.session.vars['team_a_avg_payoff'],
-            'team_b_avg_payoff': self.session.vars['team_b_avg_payoff'],
-        }
 
 class payoffsReceiptForm(Page):
 
@@ -812,8 +791,20 @@ class payoffsReceiptForm(Page):
 
     def vars_for_template(self):
 
+        for p in self.subsession.get_players(): # TRY THIS HERE!!
+
+            # if self.participant.vars['payoff_unrounded'] < Constants.minimum_payoff:
+            if self.participant.payoff < Constants.minimum_payoff:
+                p.paid = Constants.minimum_payoff
+            else:
+                p.paid = self.participant.payoff
+                # p.paid = self.participant.vars['payoff_unrounded']
+
+            p.participant.vars['paid'] = p.paid # NEW
+
         return {
             'paid': self.participant.vars['paid'],
+            'payoff': self.participant.payoff
         }
 
 
@@ -828,178 +819,6 @@ class payoffsReceiptForm(Page):
 
 
 
-##### PRE-TEST FOR MEMORY BASELINE ##################################################
-
-class pretestMemory(Page):
-    form_model = 'player'
-    form_fields = [
-                    'memory_UK',
-                    'memory_indianReservations',
-                    'memory_lakeInLibya',
-                    'memory_mountainsNetherlands',
-                    'memory_Greenland',
-                    'memory_France',
-                    'memory_LondonToEdinburgh',
-                    'memory_FrankfortUS',
-                    'rememberedSeconds',
-                    'readOtherQs',
-                    'felt',
-                    'howFair',
-                    'noticedUnfair'
-                   ]
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds
-
-
-##### FAIR PLAY / UNFAIR FEEDBACK ###################################################
-
-class intro_feedback(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-        }
-
-class fairplay(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_fairplay': self.session.vars['bullet_points_false_facts_fairplay'],
-        }
-
-class fairplay_copy(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_fairplay': self.session.vars['bullet_points_false_facts_fairplay'],
-        }
-
-
-class fairplay_repeat(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_fairplay': self.session.vars['bullet_points_false_facts_fairplay'],
-        }
-
-class fairplay_repeat_copy(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_fairplay': self.session.vars['bullet_points_false_facts_fairplay'],
-        }
-
-
-class unfair(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_unfair': self.session.vars['bullet_points_false_facts_unfair'],
-        }
-
-class unfair_copy(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_unfair': self.session.vars['bullet_points_false_facts_unfair'],
-        }
-
-
-class unfair_repeat(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_unfair': self.session.vars['bullet_points_false_facts_unfair'],
-        }
-
-class unfair_repeat_copy(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-    def vars_for_template(self):
-        return {
-            'treatment': self.participant.vars['treatment'],
-            'firstfeedback': self.participant.vars['firstfeedback'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_unfair': self.session.vars['bullet_points_false_facts_unfair'],
-        }
-
-
-class CheckBulletPoints(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-    def vars_for_template(self):
-        return {
-            # 'treatment': self.participant.vars['treatment'],
-            'falsefeedback': self.participant.vars['falsefeedback'],
-            'bullet_points_true_facts': self.session.vars['bullet_points_true_facts'],
-            'bullet_points_false_facts_fairplay': self.session.vars['bullet_points_false_facts_fairplay'],
-        }
-
-
-# SHUFFLE BULLET POINTS?
-
-#####################################################################################
-
-#  Shuffling bullet points in models.py to keep the order of qs for subsequent ratings
-
-# class bulletPoints(Page):
-#     form_model = 'player'
-#
-#     def is_displayed(self):
-#         return self.round_number == Constants.num_rounds
-#
-#     def vars_for_template(self): # NEW
-#         return {
-#             'shuffled_bullet_points' : self.participant.vars['shuffled_bullet_points'],
-#         }
 
     #####################################################################################
     #
@@ -1048,193 +867,603 @@ class expectationsLastQSlider(Page):
         return self.round_number == Constants.num_rounds - 1
 
 
+##### OWN FEEDBACK ##################################################################
+
+
+class your_feedback(Page):
+    form_model = 'player'
+    form_fields = ['wantFeedbackOn0', 'wantFeedbackOn1', 'wantFeedbackOn2']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds
+
 
 ##### DV ########################################################################
 
-class intro_dv_feedback1(Page):
+
+##### FAIR PLAY / UNFAIR FEEDBACK ###################################################
+
+# class intro_feedback(Page):
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds
+#     def vars_for_template(self):
+#         return {
+#             'treatment': self.participant.vars['treatment'],
+#             'firstfeedback': self.participant.vars['firstfeedback'],
+#             'falsefeedback': self.participant.vars['falsefeedback'],
+#         }
+
+
+class intro_verdicts(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
 
-class intro_dv_feedback1_copy(Page):
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds
 
 
-##### FEEDBACK == FAIR PLAY #####################################################
+##### PARTICIPANTS WHO SEE THE FAIR PLAY FEEDBACK 1st ###########################
 
-class fairplay_gen_agree(Page):
-    form_model = 'player'
-    form_fields = ['agreeFeedback_p0']
+class fairplay(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
-class fairplay_gen_agree_copy(Page):
-    form_model = 'player'
-    form_fields = ['agreeFeedback_p0']
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair(Page):
     def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+##### ASSESSING FEEDBACK 1 (i.e. fairplay) ######################################
+
+class intro_dv_feedback1(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+
+class repeat_fairplay_feedback1(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_gen_agree(Page):
+    form_model = 'player'
+    form_fields = ['agreeFeedback_fairplay']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
 
 
 class fairplay_accurate(Page):
     form_model = 'player'
-    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
+    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
+
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
 
-class fairplay_accurate_copy(Page):
-    form_model = 'player'
-    form_fields = ['educationRating_p0', 'accuracyRating_p0', 'representationRating_p0']
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
 
-class fairplay_falsefacts(Page):
+
+# class fairplay_falsefacts(Page):
+#     form_model = 'player'
+#     form_fields = ['true_fact_too_easy',
+#                    'true_fact_too_hard',
+#                    'true_fact_too_hard2',
+#                    'true_fact_30sec',
+#                    'false_fact_too_easy',
+#                    'false_fact_too_hard',
+#                    'false_fact_too_hard2',
+#                    'false_fact_30sec_unfair',
+#                    'false_fact_30sec_fairplay',
+#                    ]
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+#
+#     def vars_for_template(self):
+#         return {
+#             'treatment': self.participant.vars['treatment'],
+#             'firstfeedback': self.participant.vars['firstfeedback'],
+#             'falsefeedback': self.participant.vars['falsefeedback'],
+#         }
+
+
+class fairplay_rate_false_facts(Page):
     form_model = 'player'
     form_fields = [
-                   'false_fact_too_easy',
-                   'false_fact_too_hard',
-                   'false_fact_30sec_fairplay',
-                    'true_fact_too_easy',
-                    'true_fact_too_hard',
-                    'true_fact_30sec',
+        'false_fact_too_easy',
+        'false_fact_too_hard',
+        'false_fact_too_hard2',
+        'false_fact_30sec_unfair',
+        'false_fact_30sec_fairplay',
                    ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay' and self.participant.vars['falsefeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_rate_true_facts(Page):
+    form_model = 'player'
+    form_fields = [
+        'true_fact_too_easy',
+        'true_fact_too_hard',
+        'true_fact_too_hard2',
+        'true_fact_30sec',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay' and self.participant.vars['falsefeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+
+class fairplay_manipulation_check(Page):
+    form_model = 'player'
+    form_fields = ['fairplay_manipulation_check',]
+
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
     def vars_for_template(self):
         return {
             'falsefeedback': self.participant.vars['falsefeedback'],
         }
 
-class fairplay_falsefacts_copy(Page):
-    form_model = 'player'
-    form_fields = [
-                   'false_fact_too_easy',
-                   'false_fact_too_hard',
-                   'false_fact_30sec_fairplay',
-                    'true_fact_too_easy',
-                    'true_fact_too_hard',
-                    'true_fact_30sec',
-                   ]
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-    def vars_for_template(self):
-        return {
-            'falsefeedback': self.participant.vars['falsefeedback'],
-        }
 
-
-##### FEEDBACK == UNFAIR #########################################################
+##### ASSESSING FEEDBACK 2 (i.e. unfair) ########################################
 
 class intro_dv_feedback2(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+
+class repeat_unfair_feedback2(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_gen_agree(Page):
+    form_model = 'player'
+    form_fields = ['agreeFeedback_unfair']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_accurate(Page):
+    form_model = 'player'
+    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+# class unfair_falsefacts(Page):
+#     form_model = 'player'
+#     form_fields = ['true_fact_too_easy',
+#                    'true_fact_too_hard',
+#                    'true_fact_too_hard2',
+#                    'true_fact_30sec',
+#                    'false_fact_too_easy',
+#                    'false_fact_too_hard',
+#                    'false_fact_too_hard2',
+#                    'false_fact_30sec_unfair',
+#                    'false_fact_30sec_fairplay',
+#                    ]
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+#
+#     def vars_for_template(self):
+#         return {
+#             'treatment': self.participant.vars['treatment'],
+#             'firstfeedback': self.participant.vars['firstfeedback'],
+#             'falsefeedback': self.participant.vars['falsefeedback'],
+#         }
+
+
+class unfair_rate_false_facts(Page):
+    form_model = 'player'
+    form_fields = [
+                   'false_fact_too_easy',
+                   'false_fact_too_hard',
+                   'false_fact_too_hard2',
+                   'false_fact_30sec_unfair',
+                   'false_fact_30sec_fairplay',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay' and self.participant.vars['falsefeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_rate_true_facts(Page):
+    form_model = 'player'
+    form_fields = ['true_fact_too_easy',
+                   'true_fact_too_hard',
+                   'true_fact_too_hard2',
+                   'true_fact_30sec',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay' and self.participant.vars['falsefeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+
+class unfair_manipulation_check(Page):
+    form_model = 'player'
+    form_fields = ['unfair_manipulation_check']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+
+##### PARTICIPANTS WHO SEE THE UNFAIR FEEDBACK 1st ##############################
+
+class unfair_copy(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_copy(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+##### ASSESSING FEEDBACK 1 (i.e. fairplay) ######################################
+
+class intro_dv_feedback1_copy(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+
+class repeat_unfair_feedback1(Page):
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_gen_agree_copy(Page):
+    form_model = 'player'
+    form_fields = ['agreeFeedback_unfair']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self): # ONLY NEED ALL THIS IF I ADD THE UNFAIR REPEAT TEMPLATE
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_accurate_copy(Page):
+    form_model = 'player'
+    form_fields = ['educationRating_unfair', 'accuracyRating_unfair', 'representationRating_unfair']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self): # ONLY NEED ALL THIS IF I ADD THE UNFAIR REPEAT TEMPLATE
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+# class unfair_falsefacts_copy(Page):
+#     form_model = 'player'
+#     form_fields = ['true_fact_too_easy',
+#                    'true_fact_too_hard',
+#                    'true_fact_too_hard2',
+#                    'true_fact_30sec',
+#                    'false_fact_too_easy',
+#                    'false_fact_too_hard',
+#                    'false_fact_too_hard2',
+#                    'false_fact_30sec_unfair',
+#                    'false_fact_30sec_fairplay',
+#                    ]
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+#
+#     def vars_for_template(self):
+#         return {
+#             'treatment': self.participant.vars['treatment'],
+#             'firstfeedback': self.participant.vars['firstfeedback'],
+#             'falsefeedback': self.participant.vars['falsefeedback'],
+#         }
+
+
+class unfair_rate_false_facts_copy(Page):
+    form_model = 'player'
+    form_fields = [
+                   'false_fact_too_easy',
+                   'false_fact_too_hard',
+                   'false_fact_too_hard2',
+                   'false_fact_30sec_unfair',
+                   'false_fact_30sec_fairplay',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair' and self.participant.vars['falsefeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_rate_true_facts_copy(Page):
+    form_model = 'player'
+    form_fields = ['true_fact_too_easy',
+                   'true_fact_too_hard',
+                   'true_fact_too_hard2',
+                   'true_fact_30sec',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair' and self.participant.vars['falsefeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class unfair_manipulation_check_copy(Page):
+    form_model = 'player'
+    form_fields = ['unfair_manipulation_check']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+
+##### ASSESSING FEEDBACK 2 (i.e. unfair) ######################################
 
 class intro_dv_feedback2_copy(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
 
-class unfair_gen_agree(Page):
-    form_model = 'player'
-    form_fields = ['agreeFeedback_p1']
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-class unfair_gen_agree_copy(Page):
-    form_model = 'player'
-    form_fields = ['agreeFeedback_p1']
+class repeat_fairplay_feedback2(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
 
-
-class unfair_accurate(Page):
-    form_model = 'player'
-    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
-
-class unfair_accurate_copy(Page):
-    form_model = 'player'
-    form_fields = ['educationRating_p1', 'accuracyRating_p1', 'representationRating_p1']
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-
-
-class unfair_falsefacts(Page):
-    form_model = 'player'
-    form_fields = ['true_fact_too_easy',
-                   'true_fact_too_hard',
-                   'true_fact_30sec',
-                   'false_fact_too_easy',
-                   'false_fact_too_hard',
-                   'false_fact_30sec_unfair',
-                   'false_fact_30sec_fairplay',
-                   ]
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'fairplay'
     def vars_for_template(self):
         return {
-            'falsefeedback': self.participant.vars['falsefeedback'],
-        }
-
-class unfair_falsefacts_copy(Page):
-    form_model = 'player'
-    form_fields = ['true_fact_too_easy',
-                   'true_fact_too_hard',
-                   'true_fact_30sec',
-                   'false_fact_too_easy',
-                   'false_fact_too_hard',
-                   'false_fact_30sec_unfair',
-                   'false_fact_30sec_fairplay',
-                   ]
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
-    def vars_for_template(self):
-        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
             'falsefeedback': self.participant.vars['falsefeedback'],
         }
 
 
-##### CONTROL GROUP GAMES ###################################################################
-
-# class control_p0(Page):
-#     form_model = 'player'
-#     form_fields = ['fair_point_p0',
-#                    'off_the_scale_p0',
-#                    'gross_exaggeration_fairplay_person'
-#                    ]
-#     def is_displayed(self):
-#         return self.round_number == Constants.num_rounds
-#
-#     def vars_for_template(self):
-#         return {
-#             'shuffled_fair_points': self.participant.vars['shuffled_fair_points'],
-#             'shuffled_off_the_scale': self.participant.vars['shuffled_off_the_scale'],
-#         }
-#
-# class control_p1(Page):
-#     form_model = 'player'
-#     form_fields = ['fair_point_p1',
-#                    'off_the_scale_p1',
-#                    'gross_exaggeration_unfair_person'
-#                    ]
-#     def is_displayed(self):
-#         return self.round_number == Constants.num_rounds
-#
-#     def vars_for_template(self):
-#         return {
-#             'shuffled_fair_points': self.participant.vars['shuffled_fair_points'],
-#             'shuffled_off_the_scale': self.participant.vars['shuffled_off_the_scale'],
-#         }
-
-
-##### OWN FEEDBACK ##################################################################
-
-class your_feedback(Page):
+class fairplay_gen_agree_copy(Page):
     form_model = 'player'
-    form_fields = ['wantFeedbackOn0', 'wantFeedbackOn1', 'wantFeedbackOn2', 'otherFeedback1']
+    form_fields = ['agreeFeedback_fairplay']
 
     def is_displayed(self):
-        return self.round_number == Constants.num_rounds
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_accurate_copy(Page):
+    form_model = 'player'
+    form_fields = ['educationRating_fairplay', 'accuracyRating_fairplay', 'representationRating_fairplay']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+# class fairplay_falsefacts_copy(Page):
+#     form_model = 'player'
+#     form_fields = ['true_fact_too_easy',
+#                    'true_fact_too_hard',
+#                    'true_fact_too_hard2',
+#                    'true_fact_30sec',
+#                    'false_fact_too_easy',
+#                    'false_fact_too_hard',
+#                    'false_fact_too_hard2',
+#                    'false_fact_30sec_unfair',
+#                    'false_fact_30sec_fairplay',
+#                    ]
+#
+#     def is_displayed(self):
+#         return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+#
+#     def vars_for_template(self):
+#         return {
+#             'treatment': self.participant.vars['treatment'],
+#             'firstfeedback': self.participant.vars['firstfeedback'],
+#             'falsefeedback': self.participant.vars['falsefeedback'],
+#         }
+
+class fairplay_rate_false_facts_copy(Page):
+    form_model = 'player'
+    form_fields = [
+        'false_fact_too_easy',
+        'false_fact_too_hard',
+        'false_fact_too_hard2',
+        'false_fact_30sec_unfair',
+        'false_fact_30sec_fairplay',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair' and self.participant.vars['falsefeedback'] == 'fairplay'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_rate_true_facts_copy(Page):
+    form_model = 'player'
+    form_fields = [
+        'true_fact_too_easy',
+        'true_fact_too_hard',
+        'true_fact_too_hard2',
+        'true_fact_30sec',
+                   ]
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair' and self.participant.vars['falsefeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'treatment': self.participant.vars['treatment'],
+            'firstfeedback': self.participant.vars['firstfeedback'],
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
+
+
+class fairplay_manipulation_check_copy(Page):
+    form_model = 'player'
+    form_fields = ['fairplay_manipulation_check']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.participant.vars['firstfeedback'] == 'unfair'
+
+    def vars_for_template(self):
+        return {
+            'falsefeedback': self.participant.vars['falsefeedback'],
+        }
 
 
 
@@ -1251,6 +1480,49 @@ class whoGotHigherPayoff(Page):
 
 ##### LEGITIMACY OF STATUS DIFFERENCES ##############################################
 
+# IF THEY SAY TEAM A GOT A HIGHER PAYOFF:
+
+class legitTeamAhigherPayoffs(Page):
+    form_model = 'player'
+    form_fields = ['legitTeamAhigherPayoffs']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team A got a higher payoff than Team B.'
+
+
+class luckOfTheDrawTeamA(Page):
+    form_model = 'player'
+    form_fields = ['byChanceTeamAEasierQs']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team A got a higher payoff than Team B.'
+
+# IF THEY SAY TEAM B GOT A HIGHER PAYOFF:
+
+class legitTeamBhigherPayoffs(Page):
+    form_model = 'player'
+    form_fields = ['legitTeamBhigherPayoffs']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team B got a higher payoff than Team A.'
+
+
+class luckOfTheDrawTeamB(Page):
+    form_model = 'player'
+    form_fields = ['byChanceTeamAEasierQs']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team B got a higher payoff than Team A.'
+
+
+class fairSlider(Page):
+    form_model = 'player'
+    form_fields = ['fair']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds
+
+
 # NB: Determining form fields dynamically
 
 # If you need the list of form fields to be dynamic, instead of form_fields you can define a method
@@ -1264,23 +1536,6 @@ class whoGotHigherPayoff(Page):
 
 # IF Team A got easier Qs:
 
-class fair(Page):
-    form_model = 'player'
-    form_fields = ['fairTeamAEasierQs']
-
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team A got a higher payoff than Team B.'
-
-
-class byChanceTeamAEasierQs(Page):
-    form_model = 'player'
-    form_fields = ['byChanceTeamAEasierQs']
-
-    def is_displayed(self):
-        return self.round_number == Constants.num_rounds and self.player.whoGotHigherPayoff == 'On average, Team A got a higher payoff than Team B.'
-
-
-
 
 ##### STABILITY OF STATUS DIFFERENCES ###############################################
 
@@ -1293,13 +1548,18 @@ class feedbackMakesDifference(Page):
 
 
 
-
-
 ##### CONTROLS ######################################################################
 
 class trivia(Page):
     form_model = 'player'
-    form_fields = ['trivialPursuit1', 'trivialPursuit2']
+    form_fields = ['trivialPursuit1', 'trivialPursuit2', 'trivialPursuit3', 'likeTrivia']
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds
+
+
+class rigged(Page):
+    form_model = 'player'
+    form_fields = ['rigged']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
@@ -1313,17 +1573,20 @@ class labExperience(Page):
 
 ##### DEMOGRAPHICS ###################################################################
 
+
 class gender(Page):
     form_model = 'player'
     form_fields = ['gender']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
+
 class born(Page):
     form_model = 'player'
     form_fields = ['born']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
+
 
 class education(Page):
     form_model = 'player'
@@ -1337,6 +1600,7 @@ class atEssex(Page):
     form_fields = ['atEssex']
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
+
 
 class big5(Page):
     form_model = 'player'
@@ -1359,13 +1623,18 @@ class big5(Page):
 
 class positionAtEssex(Page):
     form_model = 'player'
-
-    def get_form_fields(self):
-        if self.player.atEssex == 'Yes':
-            return ['positionAtEssex', 'major']
+    form_fields = ['positionAtEssex']
 
     def is_displayed(self):
-        return self.round_number == Constants.num_rounds
+        return self.round_number == Constants.num_rounds and self.player.atEssex == 'Yes'
+
+
+class major(Page):
+    form_model = 'player'
+    form_fields = ['positionAtEssex']
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds and self.player.atEssex == 'Yes'
 
 
 class british(Page):
@@ -1413,30 +1682,22 @@ class theEnd(Page):
 
 page_sequence = [
 
-    #### INTRO
+    ### INTRO
 
     welcome,
-    consent,                                # ... needed to calculate payoffs
+    consent,                                # ... needed to calculate payoffs # ... DONT COMMENT OUT FOR PRE-TESTING!!
     intro,
     intro2,
     intro3,
-    allocatedTeam,
+    WaitToStart,
+    allocatedTeam,                          # ... calculating team sizes
 
-    #### PRACTICE
-
-    practice_question,
-    other_practice_question,
-    introPaidQuiz,                          # ... calculating team sizes
 
     #### ROUNDS
 
     question,
     otherQuestion,
-
-    #### MANIPULATION CHECK 1
-
-    expectationsLastQ,
-    # expectationsLastQSlider,
+    expectationsLastQ,                      # Manipulation Check I (do they get that the odds differ?)
 
     #### WAIT FOR 2nd / 3rd ROUND
 
@@ -1445,8 +1706,8 @@ page_sequence = [
     #### RESULTS EACH ROUND (after ever 4 Qs)
 
     ownResultsThisRound,
-    ## CheckRound1,
-    ## CheckRound2,
+    # CheckRound1,
+    # CheckRound2,
     otherTeamsQsThisRound,
     teamsResultsThisRound,
 
@@ -1454,22 +1715,21 @@ page_sequence = [
 
     endQuiz,                                # ... calculating is_correct_total
     CalculatePayoffs,
-    ownResultsAllRounds,
+    # ownResultsAllRounds,                  # ... see if I can kick this out
 
     ## CheckRound3,
     ## teamsResultsAllRounds,
     payoffs,
-    payoffsReceiptForm,
-    ## payoffsDetailed,
+    # payoffsReceiptForm,
 
-    #### PRETEST MEMORY
-
-    pretestMemory,
 
     #### FEEDBACK PAGES
 
-    intro_feedback,
-    CheckBulletPoints,
+    ## intro_feedback,
+    your_feedback,
+    ## CheckBulletPoints,
+
+    intro_verdicts,
 
     #### IF FIRSTFEEDBACK = FAIRPLAY:
 
@@ -1477,16 +1737,20 @@ page_sequence = [
     unfair,
 
     intro_dv_feedback1,
-    fairplay_repeat,
-    fairplay_gen_agree,
-    fairplay_accurate,
-    fairplay_falsefacts,
+    repeat_fairplay_feedback1,              # OLD: fairplay_repeat
+    fairplay_manipulation_check,            # Manipulation Check II (do they get that this person think it is unfair / fair play?)
+    fairplay_gen_agree,                     # template_repeat_fairplay_feedback1
+    fairplay_accurate,                      # template_repeat_fairplay_feedback1
+    fairplay_rate_false_facts,              # template_repeat_fairplay_feedback1 # SHOW IF falsefeedback == 'fairplay'
+    fairplay_rate_true_facts,               # template_repeat_fairplay_feedback1 # SHOW IF falsefeedback == 'unfair'
 
     intro_dv_feedback2,
-    unfair_repeat,
-    unfair_gen_agree,
-    unfair_accurate,
-    unfair_falsefacts,
+    repeat_unfair_feedback2,                # OLD: unfair_repeat,
+    unfair_manipulation_check,
+    unfair_gen_agree,                       # template_repeat_unfair_feedback2
+    unfair_accurate,                        # template_repeat_unfair_feedback2
+    unfair_rate_false_facts,                # template_repeat_unfair_feedback2  # SHOW IF falsefeedback == 'unfair'
+    unfair_rate_true_facts,                 # template_repeat_unfair_feedback2  # SHOW IF falsefeedback == 'fairplay'
 
     #### IF FIRSTFEEDBACK = UNFAIR:
 
@@ -1494,31 +1758,37 @@ page_sequence = [
     fairplay_copy,
 
     intro_dv_feedback1_copy,
-    unfair_repeat_copy,
-    unfair_gen_agree_copy,
-    unfair_accurate_copy,
-    unfair_falsefacts_copy,
+    repeat_unfair_feedback1,                # unfair_repeat_copy,
+    unfair_manipulation_check_copy,
+    unfair_gen_agree_copy,                  # template_repeat_unfair_feedback1
+    unfair_accurate_copy,                   # template_repeat_unfair_feedback1
+    unfair_rate_false_facts_copy,           # template_repeat_unfair_feedback2  # SHOW IF falsefeedback == 'unfair'
+    unfair_rate_true_facts_copy,            # template_repeat_unfair_feedback2  # SHOW IF falsefeedback == 'fairplay'
 
     intro_dv_feedback2_copy,
-    fairplay_repeat_copy,
-    fairplay_gen_agree_copy,
-    fairplay_accurate_copy,
-    fairplay_falsefacts_copy,
+    repeat_fairplay_feedback2,              # OLD: fairplay_repeat_copy,
+    fairplay_manipulation_check_copy,
+    fairplay_gen_agree_copy,                # template_repeat_fairplay_feedback2
+    fairplay_accurate_copy,                 # template_repeat_fairplay_feedback2
+    fairplay_rate_false_facts_copy,         # template_repeat_fairplay_feedback1 # SHOW IF falsefeedback == 'fairplay'
+    fairplay_rate_true_facts_copy,          # template_repeat_fairplay_feedback1 # SHOW IF falsefeedback == 'unfair'
 
-    # CheckBulletPoints,
 
-    your_feedback,
 
     #### Legitimacy, Stability
 
-    whoGotHigherPayoff,
-    fair,                       # IF TEAM A: byChanceTeamAEasierQs
-    byChanceTeamAEasierQs,
+    whoGotHigherPayoff,                     # Manipulation Check III (do they get that the payoffs differ?)
+    legitTeamAhigherPayoffs,
+    legitTeamBhigherPayoffs,
+    luckOfTheDrawTeamA,
+    luckOfTheDrawTeamB,
+    fairSlider,
     feedbackMakesDifference,
 
     #### CONTROLS & DEMOGRAPHICS
 
     trivia,
+    rigged,
     gender,
     born,
     education,

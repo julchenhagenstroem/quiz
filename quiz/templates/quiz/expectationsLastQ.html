@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-    Expectations
+    Predictions
 {% endblock %}
 
 {% block content %}
@@ -11,6 +11,13 @@
 <div class="instructions well well-lg">
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
+
+    <p>
+        Before we move on to the last question:
+    </p>
+    <p>
+        <strong>If you had to predict how easy or how difficult the last question will be</strong>, would you say that:
+    </p>
 
     {% for field in form %}
         {% formfield field %}

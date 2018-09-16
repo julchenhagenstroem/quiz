@@ -2,7 +2,7 @@
 {% load staticfiles otree %}
 
 {% block title %}
-    Your Feedback
+    Higher Payoffs: Team B
 {% endblock %}
 
 {% block content %}
@@ -10,13 +10,6 @@
 <div class="instructions well well-lg">
     <h2 class="panel-sub-heading"></h2>
     <link rel="stylesheet" type="text/css"/>
-
-
-<p>
-    Now we would like to know what you thought of this game. In particular, we are interested in your opinions on the
-    following three questions:
-
-</p>
 
     {% for field in form %}
         {% formfield field %}

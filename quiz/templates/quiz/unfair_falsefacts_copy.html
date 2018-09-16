@@ -8,7 +8,7 @@
 {% block content %}
 
 <p>
-    Now we are interested in what you think about the last three points in this person's feedback.
+    Now we are interested in what you think about the last four points in this person's feedback.
     How true or false do you think they are?
 </p>
 
@@ -21,14 +21,14 @@
 
             {% formfield player.false_fact_too_easy %}
             {% formfield player.false_fact_too_hard %}
+            {% formfield player.false_fact_too_hard2 %}
             {% formfield player.false_fact_30sec_unfair %}
 
-        {% endif %}
-
-        {% if falsefeedback == 'fairplay' %}
+        {% else %}
 
             {% formfield player.true_fact_too_easy %}
             {% formfield player.true_fact_too_hard %}
+            {% formfield player.true_fact_too_hard2 %}
             {% formfield player.true_fact_30sec %}
 
         {% endif %}
@@ -36,8 +36,8 @@
 </div>
 </body>
 
-<span align="right">
-{% next_button %}
-</span>
+For your reference, this was feedback 1:
+
+{% include Constants.unfair_template %}
 
 {% endblock %}

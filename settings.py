@@ -15,7 +15,7 @@ SESSION_CONFIGS = [
     {
         'name': 'quiz',
         'display_name': "Quiz",
-        'num_demo_participants': 3,
+        'num_demo_participants': 2,
         'app_sequence': ['quiz'],
     },
     # {
